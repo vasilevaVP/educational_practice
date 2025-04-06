@@ -428,6 +428,29 @@ app.get("/catalog", async (req, res) => {
   }
 });
 
+// Роут для страницы подробнее для разработки
+app.get("/card", isAuthenticated, async (req, res) => {
+  const developmentId = req.query.id;
+  try {
+    const development = await Development.findByPk(developmentId, {
+      include: [
+        { model: Category, as: "category" },
+        { model: Tag, through: DevelopmentTags, as: "tags" },
+      ],
+    });
+    if (!development) {
+      return res.status(404).send("Разработка не найдена");
+    }
+    res.render("card", {
+      user: req.session.user,
+      development: development,
+    });
+  } catch (error) {
+    console.error("Ошибка при получении карточки:", error);
+    res.status(500).send("Ошибка сервера");
+  }
+});
+
 // Роут для страницы о нас
 app.get("/about_us", async (req, res) => {
   res.render("about_us", { user: req.session.user });
@@ -950,7 +973,7 @@ app.get(
 
 // Роут для отображения формы редактирования разработки
 app.get(
-  "/admin/dents/edit/:id",
+  "/admin/developments/edit/:id",
   isAuthenticated,
   hasRole("admin"),
   async (req, res) => {

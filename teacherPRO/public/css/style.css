@@ -10,10 +10,11 @@
 }
 
 body {
+  background-image: url(../img/body-bg.svg);
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  background-color: #eeeadf;
+  background-color: #f8f7f3;
   font-family: Geologica;
 }
 
@@ -596,7 +597,7 @@ section13 h2 {
   border-color: var(--blue);
   border-radius: 10px;
   font: 400 16px Geologica;
-  background-color: #eeeadf;
+  background-color: #f8f7f3;
   color: var(--blue);
   cursor: pointer;
 }
@@ -726,14 +727,26 @@ section20 button {
 
 /*Карточка ресурса*/
 
-section21 .resurs {
-  width: 1180px;
+section21 {
+  width: 1100px;
   margin: 0 auto;
   display: flex;
-  gap: 120px;
-  align-items: center;
+  justify-content: flex-start;
   font: var(--p);
   margin-top: 80px;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-left: 50px;
+}
+.info h1 {
+  font: 600 32px Geologica;
+}
+.categteg {
+  margin-top: 10px;
+  margin-bottom: 50px;
 }
 
 .textres .teg p {
@@ -744,7 +757,7 @@ section21 .resurs {
   border-radius: 10px;
   margin-right: 15px;
 }
-.resurs .teg {
+.teg {
   margin: 48px 0 48px 0;
 }
 .bu {
@@ -772,7 +785,7 @@ section21 .resurs {
 }
 
 .opis {
-  width: 1064px;
+  width: 1100px;
   margin: 0 auto;
   margin-top: 70px;
   margin-bottom: 270px;
