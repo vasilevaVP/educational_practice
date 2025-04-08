@@ -237,6 +237,30 @@ const Profile = sequelize.define(
   }
 );
 
+// Модель Subscription
+const Subscription = sequelize.define(
+  "Subscription",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+  },
+  {
+    timestamps: true,
+    tableName: "subscriptions",
+  }
+);
+
 // Связующая таблица DevelopmentTags для Many-to-Many
 const DevelopmentTags = sequelize.define(
   "DevelopmentTags",
@@ -403,6 +427,26 @@ app.get("/", (req, res) => {
 // Роут для главной страницы
 app.get("/index", async (req, res) => {
   res.render("index", { user: req.session.user });
+});
+
+// Роут для обработки подписки на рассылку
+app.post("/subscribe", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const existingSubscription = await Subscription.findOne({
+      where: { email },
+    });
+    if (existingSubscription) {
+      return res
+        .status(400)
+        .json({ message: "Этот email уже подписан на рассылку." });
+    }
+    await Subscription.create({ email: email.trim() });
+    res.json({ message: "Вы успешно подписались на рассылку!" });
+  } catch (error) {
+    console.error("Ошибка при подписке на рассылку:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 // Роут для страницы каталога

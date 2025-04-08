@@ -16,7 +16,25 @@
     <title>УчительPRO: Главная</title>
     <link rel="icon" href="./img/iconlogo.ico">
 </head>
-
+<style>
+    /* Стили для всплывающего сообщения снизу */
+    .bottom-message {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50; /* Зеленый фон по умолчанию */
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        z-index: 1000; /* Чтобы быть поверх всего */
+        display: none; /* Скрыто по умолчанию */
+        transition: opacity 0.5s ease-in-out;
+    }
+    .bottom-message.error {
+      background-color: #f44336; /* Красный фон для ошибок */
+    }
+    </style>
 <body>
     <header>
         <div class="logo"><a href="/index"><img src="./img/logo1.svg" alt=""></div></a>
@@ -126,15 +144,19 @@
         <div class="sub">
             <h2>Оставайтесь с нами на связи</h2>
             <p>Оставьте свой email и мы будем оповещать Вас о новых разработках и мероприятиях!</p>
-            <img src="./img/Paper Plane.png" alt="" width="81" height="81">
+            <img src="" alt="" width="81" height="81">
             <div class="form">
-                <input type="email" placeholder="Введите email">
-                <form action="">
-                    <button>Подписаться</button>
+              <form id="subscriptionForm">
+                    <input type="email" name="email" id="emailInput" placeholder="Введите email" required>
+                  <button type="submit">Подписаться</button>
                 </form>
             </div>
         </div>
     </section5>
+
+<!-- Всплывающее сообщение снизу -->
+<div id="bottomMessage" class="bottom-message"></div>
+
     <section6>
         <div class="user">
             <h2>Кому нужны методические разработки</h2>
@@ -240,7 +262,57 @@
         </div>
     </footer>
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            const emailInput = document.getElementById('emailInput');
+            const bottomMessage = document.getElementById('bottomMessage');
+        
+            subscriptionForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const email = emailInput.value;
+        
+                try {
+                    const response = await fetch('/subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: email })
+                    });
+        
+                    const data = await response.json();
+                    bottomMessage.textContent = data.message;
+                    bottomMessage.classList.remove('error');
+                    bottomMessage.style.backgroundColor = '#4CAF50'; // Зеленый цвет успеха
+                    bottomMessage.style.display = 'block';
+        
+                     setTimeout(() => {
+                        bottomMessage.style.opacity = '0';
+                        setTimeout(() => {
+                            bottomMessage.style.display = 'none';
+                            bottomMessage.style.opacity = '1'; // Reset opacity for next use
+                        }, 500); // Соответствует времени transition
+                    }, 3000);
+        
+                } catch (error) {
+                    console.error('Ошибка при подписке:', error);
+                    bottomMessage.textContent = "Ошибка сервера";
+                    bottomMessage.classList.add('error');
+                    bottomMessage.style.backgroundColor = '#f44336'; // Красный цвет ошибки
+                    bottomMessage.style.display = 'block';
+                   setTimeout(() => {
+                        bottomMessage.style.opacity = '0';
+                        setTimeout(() => {
+                            bottomMessage.style.display = 'none';
+                            bottomMessage.style.opacity = '1'; // Reset opacity for next use
+                        }, 500); // Соответствует времени transition
+                    }, 3000);
+                }
+                emailInput.value = '';
+            });
+        });
+        </script>
 </body>
 
 </html>
