@@ -1,42 +1,80 @@
 <footer>
-<div class="two">
-    <div class="quecoop">
-        <img src="./img/logo2.svg" alt="">
-        <div class="question">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-logo">
+          <img src="./img/logo2.svg" alt="Логотип УчительPRO">
+          <div class="footer-contacts">
             <p>По всем вопросам:</p>
-            <p>teacherpro@mail.ru</p>
+            <a href="mailto:teacherpro@mail.ru">teacherpro@mail.ru</a>
+          </div>
         </div>
-    </div>
-    <div class="nn">
-        <div class="navi">
-            <ul>
-                <a href="/index">
-                    <li>Главная</li>
-                </a>
-                <a href="/about_us">
-                    <li>О нас</li>
-                </a>
-                <a href="/catalog">
-                    <li>Каталог</li>
-                </a>
-                <a href="/addDevelopment">
-                    <li>Ваши разработки</li>
-                </a>
-            </ul>
+        
+        <div class="footer-social">
+          <a href="#"><img src="./img/vk.svg" alt="ВКонтакте"></a>
+          <a href="#"><img src="./img/youtube.svg" alt="YouTube"></a>
+          <a href="#"><img src="./img/telegram.svg" alt="Telegram"></a>
         </div>
-        <div class="navi2">
-            <ul>
-                <li>Поддержка</li>
-                <li>Вопросы</li>
-                <li>Документация</li>
-                <li>Сотрудничество</li>
-            </ul>
+      </div>
+      
+      <div class="footer-bottom">
+        <div class="footer-nav">
+          <ul>
+            <li><a href="/index">Главная</a></li>
+            <li><a href="/about_us">О нас</a></li>
+            <li><a href="/catalog">Каталог</a></li>
+            <li><a href="/addDevelopment">Ваши разработки</a></li>
+          </ul>
         </div>
+        
+        <div class="footer-info">
+          <ul>
+            <li><a href="#">Поддержка</a></li>
+            <li><a href="#">Вопросы</a></li>
+            <li><a href="#">Документация</a></li>
+            <li><a href="#">Сотрудничество</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-copyright">
+        <p>© 2025 УчительPRO. Все права защищены.</p>
+      </div>
     </div>
-    <div class="three">
-        <img src="./img/vk.svg" alt="">
-        <img src="./img/youtube.svg" alt="">
-        <img src="./img/telegram.svg" alt="">
-    </div>
-</div>
-</footer>
+    <button id="backToTop" class="back-to-top" aria-label="Наверх">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 15l-6-6-6 6"/>
+        </svg>
+      </button>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const footer = document.querySelector('footer');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        footer.classList.add('show');
+      }
+    });
+  });
+  observer.observe(footer);
+});
+
+// Кнопка "Наверх"
+const backToTopBtn = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 300) {
+    backToTopBtn.classList.add('visible');
+  } else {
+    backToTopBtn.classList.remove('visible');
+  }
+});
+
+backToTopBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+  </script>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
@@ -36,25 +36,18 @@
 <body>    <%- include('partials/header', {user: user}) %>
     <main>
 
-
-    <section id="slider">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="slick/slick.min.js"></script>
         <script src="script.js"></script>
-        <div class="slider">
-            <a href="/addDevelopment">
-                <div class="slide" style="background-image: url('./img/slider1.png');"></div>
-            </a>
-            <a href="/catalog">
-                <div class="slide" style="background-image: url('./img/slider2.gif');"></div>
-            </a>
-            <a href="/addDevelopment">
-                <div class="slide" style="background-image: url('./img/slider3.png');"></div>
-            </a>
-        </div>
-        <button class="arrow prev">&#10094;</button>
-        <button class="arrow next">&#10095;</button>
-    </section>
+        <section id="slider-container">
+            <div class="slider">
+                <div><a href="/addDevelopment"><img src="./img/slider1.png" alt=""></a></div>
+                <div><a href="/catalog"><img src="./img/slider2.gif" alt=""></a></div>
+                <div><a href="/addDevelopment"><img src="./img/slider3.png" alt=""></a></div>
+            </div>
+            <button class="arrow prev">&#10094;</button>
+            <button class="arrow next">&#10095;</button>
+        </section>
     <section>
         <h2>Что делает <b>УчительPRO </b>особенным?</h2>
         <div class="pro">

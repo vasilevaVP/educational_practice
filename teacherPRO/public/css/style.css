@@ -18,99 +18,369 @@ body {
 }
 
 /*Шапка*/
+/* Хедер - общие стили */
 header {
-  width: 1180px;
+  width: 95%;
+  max-width: 1180px;
+  margin: 20px auto 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto;
-  margin-top: 45px;
+  padding: 10px 0;
+  position: relative;
 }
 
-.nav ul {
-  display: flex;
-  gap: 57px;
-  font: 400 20px Geologica;
-  list-style: none;
+/* Логотип */
+.logo img {
+  height: 40px;
+  width: auto;
 }
-.navbt {
+
+/* Основное меню */
+.main-nav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 20px;
-  font: 400 20px Geologica;
+}
+
+.nav-list {
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
   list-style: none;
-  text-decoration: none;
+  align-items: center;
 }
 
-a {
-  text-decoration: none;
+.nav-list a {
   color: #4c3b91;
-  cursor: pointer;
+  text-decoration: none;
+  font: 400 18px Geologica;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-header button {
-  width: 223px;
-  height: 45px;
+.nav-list a:hover {
+  color: #7864c9;
+}
+
+.profile-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.login-btn {
+  background: rgb(253, 231, 207);
+  padding: 8px 20px;
   border-radius: 10px;
-  border: none;
-  font: 400 20px Geologica;
-  background-color: var(--fiol);
+  margin-left: 160px;
+}
+
+.nav-form button {
+  background: var(--fiol);
   color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font: 400 16px Geologica;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.nav-form button:hover {
+  background: #9785e2;
+}
+
+/* Бургер-меню (только для мобильных) */
+.burger-menu {
+  display: none;
   cursor: pointer;
 }
 
-header button:hover {
-  background: rgb(182, 165, 248);
-  background: linear-gradient(
-    90deg,
-    rgba(182, 165, 248, 1) 0%,
-    rgba(15, 31, 152, 1) 100%
-  );
+/* Адаптив */
+@media (max-width: 900px) {
+  .main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 30px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 90;
+  }
+
+  .main-nav.active {
+    right: 0;
+  }
+
+  .nav-list {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .login-btn {
+    margin-left: 0;
+  }
+
+  .nav-form {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .nav-form button {
+    width: 100%;
+  }
+
+  .burger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    z-index: 100;
+  }
+
+  .burger-menu span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #4c3b91;
+    transition: all 0.3s ease;
+  }
+
+  .burger-menu.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .burger-menu.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger-menu.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 }
-/*Подвал*/
+
 footer {
   background-color: var(--fiol);
-  font: 200 20px Geologica;
-  padding: 40px;
   color: white;
+  padding: 40px 0;
+  font-family: Geologica;
+  transform: translateY(20px);
+  opacity: 0;
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
 }
 
-.two {
-  width: 1180px;
+footer.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.footer-container {
+  width: 90%;
+  max-width: 1180px;
   margin: 0 auto;
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
 }
 
-.question p,
-.coop p {
-  margin: 29px 0 10px 0;
-  padding: 0;
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.footer-logo img {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.footer-contacts p {
+  font-size: 18px;
+  margin-bottom: 10px;
   font-weight: 300;
 }
 
-.question {
-  margin-bottom: 27px;
+.footer-contacts a {
+  color: white;
+  text-decoration: none;
+  font-weight: 200;
+  transition: opacity 0.3s;
 }
 
-.navi li,
-.navi2 li {
-  list-style-type: none;
-  margin-bottom: 20px;
-  font-weight: 200;
+.footer-contacts a:hover {
+  opacity: 0.8;
 }
-.navi a {
+
+.footer-social {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-social img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s;
+}
+
+.footer-social img:hover {
+  transform: scale(1.1);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-nav ul,
+.footer-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-nav li,
+.footer-info li {
+  margin-bottom: 15px;
+}
+
+.footer-nav a,
+.footer-info a {
+  color: white;
+  text-decoration: none;
+  font-weight: 200;
+  font-size: 16px;
+  transition: opacity 0.3s;
+}
+
+.footer-nav a:hover,
+.footer-info a:hover {
+  opacity: 0.8;
+}
+
+.footer-copyright {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 200;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Кнопка "Наверх" */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--fiol);
+  border: 2px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top svg {
+  width: 24px;
+  height: 24px;
   color: white;
 }
-.nn {
-  display: flex;
-  gap: 40px;
+
+.back-to-top:hover {
+  background-color: white;
+  transform: translateY(-3px);
 }
 
-.three img {
-  margin-top: 143px;
+.back-to-top:hover svg {
+  color: var(--fiol);
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    width: 44px;
+    height: 44px;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  footer {
+    padding: 30px 0;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    margin-bottom: 30px;
+  }
+
+  .footer-logo {
+    margin-bottom: 30px;
+  }
+
+  .footer-social {
+    margin-top: 20px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .footer-nav ul,
+  .footer-info ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px 30px;
+  }
+
+  .footer-nav li,
+  .footer-info li {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-nav ul,
+  .footer-info ul {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .footer-contacts p {
+    font-size: 16px;
+  }
+
+  .footer-contacts a {
+    font-size: 14px;
+  }
 }
 
 /*Главная страница*/
@@ -126,34 +396,63 @@ main h2 {
   margin: 200px 0 80px 0;
 }
 
-.slider {
-  width: 1000px;
-  overflow: hidden;
+/* Стили для контейнера слайдера */
+#slider-container {
+  position: relative;
+  max-width: 1000px;
   margin: 0 auto;
+  overflow: hidden;
 }
-.slide {
-  width: 1000px;
-  height: 555px;
-  background-size: cover;
-  align-items: center;
+
+/* Основные стили слайдера */
+.slider {
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+.slider .slick-list,
+.slider .slick-track {
+  height: 100%;
+}
+
+.slider div {
+  outline: none;
+}
+
+.slider img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 555px; /* Фиксируем максимальную высоту */
+  object-fit: cover;
+}
+
 .arrow {
   position: absolute;
   top: 50%;
-  background-color: rgb(120, 100, 201, 0.2);
+  transform: translateY(-50%);
+  background-color: rgba(120, 100, 201, 0.2);
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 20px 10px;
+  padding: 15px 10px;
   cursor: pointer;
+  z-index: 10;
 }
 
 .arrow.prev {
-  left: 120px;
+  left: 10px;
 }
 
 .arrow.next {
-  right: 120px;
+  right: 10px;
+}
+
+.slick-initialized .slick-slide {
+  float: none;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .pro {
@@ -206,8 +505,6 @@ h2 b {
 }
 
 .txtblock button {
-  width: 259px;
-  height: 59px;
   padding: 20px 40px;
   border: none;
   border-radius: 10px;
@@ -215,6 +512,7 @@ h2 b {
   color: #4f4258;
   background-color: #fefefe;
   margin-top: 40px;
+  display: inline-block;
   cursor: pointer;
 }
 .txtblock button:hover {
@@ -250,7 +548,6 @@ h2 b {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  gap: 12px;
   margin-top: 60px;
 }
 
@@ -327,6 +624,138 @@ input::-webkit-input-placeholder {
   font-weight: 300;
   font-size: 16px;
 }
+
+/* Медиазапросы для адаптива */
+@media (max-width: 1180px) {
+  main {
+    width: 95%;
+    padding: 0 2.5%;
+    margin-top: 10px;
+  }
+
+  .pro,
+  #papka,
+  #sub,
+  #whatUs,
+  #plan {
+    width: 100%;
+  }
+  .txtblock p {
+    width: 70%;
+  }
+
+  .txtblock {
+    width: 47%;
+    top: 90px;
+  }
+  .txtblock button {
+    margin-top: 2%;
+  }
+}
+
+/* Адаптивные стили */
+@media (max-width: 1000px) {
+  #slider-container {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .slider img {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .slider img {
+    max-height: 300px;
+  }
+
+  .arrow {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Скрываем стрелки на мобильных */
+  .arrow {
+    display: none;
+  }
+
+  /* Адаптируем секцию "Что делает УчительPRO особенным" */
+  .pro {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 100px;
+  }
+
+  .pro1 {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 40px;
+  }
+
+  /* Адаптируем секцию с папкой */
+  #papka {
+    height: auto;
+    padding: 40px 0;
+  }
+
+  .txtblock {
+    width: 90%;
+    position: static;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+  }
+
+  .txtblock p {
+    width: 100%;
+  }
+
+  /* Адаптируем форму подписки */
+  #sub .form {
+    width: 70%;
+    flex-direction: column;
+  }
+  .form input {
+    margin-bottom: 10px;
+  }
+
+  #sub p {
+    width: 90%;
+  }
+
+  /* Адаптируем секцию с пользователями */
+  .imguser {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .imguser img {
+    width: 120px;
+    height: auto;
+  }
+
+  /* Адаптируем секцию с уроками */
+  .urok {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  #plan {
+    margin-bottom: 100px;
+  }
+
+  main h2 {
+    margin: 100px 0 50px 0;
+    font-size: 32px;
+  }
+}
+
 /*Страница О нас*/
 
 .stor1 {

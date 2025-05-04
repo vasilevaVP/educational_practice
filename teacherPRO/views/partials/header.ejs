@@ -1,36 +1,56 @@
 <header>
-    <div class="logo"><a href="/index"><img src="./img/logo1.svg" alt=""></div></a>
-    <div class="nav">
-        <ul>
-            <a href="/index">
-                <li>Главная</li>
-            </a>
-            <a href="/about_us">
-                <li>О нас</li>
-            </a>
-            <a href="/catalog">
-                <li>Каталог</li>
-            </a>
-        </ul>
+    <div class="logo">
+        <a href="/index"><img src="./img/logo1.svg" alt="УчительPRO"></a>
     </div>
-    <div class="navbt">
-        <% if (user) { %>
-            <% if (user.role === 'admin') { %>
-               <a href="/admin">
-                <li>Админ-панель</li> 
-               </a>
+    
+    <!-- Бургер для мобильных -->
+    <div class="burger-menu" id="burgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <!-- Основное меню -->
+    <nav class="main-nav" id="mainNav">
+        <ul class="nav-list">
+            <li><a href="/index">Главная</a></li>
+            <li><a href="/about_us">О нас</a></li>
+            <li><a href="/catalog">Каталог</a></li>
+            
+            <!-- Элементы авторизации -->
+            <% if (user) { %>
+                <li class="profile-item">
+                    <a href="/profile">
+                        <img src="./img/lk.svg" alt="" class="profile-icon">
+                        <% if (user.role === 'admin') { %>
+                            <span class="nav-text">Админ</span>
+                        <% } else { %>
+                            <span class="nav-text">Профиль</span>
+                        <% } %>
+                    </a>
+                </li>
             <% } else { %>
-                <a href="/profile">
-                    <img src="./img/lk.svg" alt="">
-                </a>
+                <li><a href="/login" class="login-btn">Войти</a></li>
             <% } %>
-        <% } else { %>
-              <a href="/login">
-                <li>Авторизация/Регистрация</li> 
-            </a>
-       <% } %>
-        <form action="/addDevelopment">
-            <button>+ Новый материал</button>
+        </ul>
+        <!-- Кнопка "Новый материал" внутри меню -->
+        <form action="/addDevelopment" class="nav-form">
+            <button type="submit">+ Новый материал</button>
         </form>
-    </div>
+    </nav>
+    <script>const burgerMenu = document.getElementById('burgerMenu');
+        const mainNav = document.getElementById('mainNav');
+        
+        burgerMenu.addEventListener('click', function() {
+            this.classList.toggle('active');
+            mainNav.classList.toggle('active');
+        });
+        
+        // Закрытие меню при клике на ссылку
+        document.querySelectorAll('.nav-list a').forEach(link => {
+            link.addEventListener('click', () => {
+                burgerMenu.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });</script>
 </header>
