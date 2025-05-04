@@ -1,0 +1,36 @@
+<header>
+    <div class="logo"><a href="/index"><img src="./img/logo1.svg" alt=""></div></a>
+    <div class="nav">
+        <ul>
+            <a href="/index">
+                <li>Главная</li>
+            </a>
+            <a href="/about_us">
+                <li>О нас</li>
+            </a>
+            <a href="/catalog">
+                <li>Каталог</li>
+            </a>
+        </ul>
+    </div>
+    <div class="navbt">
+        <% if (user) { %>
+            <% if (user.role === 'admin') { %>
+               <a href="/admin">
+                <li>Админ-панель</li> 
+               </a>
+            <% } else { %>
+                <a href="/profile">
+                    <img src="./img/lk.svg" alt="">
+                </a>
+            <% } %>
+        <% } else { %>
+              <a href="/login">
+                <li>Авторизация/Регистрация</li> 
+            </a>
+       <% } %>
+        <form action="/addDevelopment">
+            <button>+ Новый материал</button>
+        </form>
+    </div>
+</header>

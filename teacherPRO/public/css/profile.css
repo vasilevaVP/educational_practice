@@ -1,0 +1,283 @@
+:root {
+  --fiol: #7864c9;
+  --yellow: #ffce66;
+  --blue: #5b8dc8;
+  --text: #000000;
+  --h2-color: #200e49;
+  --h2: 600 40px Geologica;
+  --p: 200 20px Geologica;
+}
+
+body {
+  font-family: Geologica;
+}
+
+main {
+  width: 1180px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.profile-container {
+  margin: 0 auto;
+  padding: 20px;
+  width: 1118px;
+  border-radius: 20px;
+  background-color: #f5f0e7;
+  margin-top: 80px;
+  margin-bottom: 150px;
+  text-align: center;
+}
+
+.profile-container h2 {
+  font: 600 40px Geologica;
+  margin: 0 0 30px 0;
+}
+.profile-container p {
+  font: 200 20px Geologica;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: 400 16px Geologica;
+  border-bottom: 3px solid transparent;
+}
+
+.tabs button.active {
+  border-bottom: 3px solid #7864c9;
+  border-right: 3px solid #7864c9;
+  border-top: 1px solid #7864c9;
+  border-left: 1px solid #7864c9;
+  font-weight: 500;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab {
+  display: none;
+}
+.tab.active {
+  display: block;
+  text-align: left;
+}
+
+.tabs button {
+  border: none;
+  border-radius: 10px;
+  margin-top: 30px;
+  font: 500 16px Geologica;
+  background-color: #f5f0e7;
+  color: var(--fiol);
+  cursor: pointer;
+}
+
+/* Стили для списка разработок */
+.developments-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.development-item {
+  border: 2px solid #9485d0;
+  border-radius: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #f4f2f2;
+}
+
+.development-item h3 {
+  font: 500 23px Geologica;
+  color: var(--text);
+  color: var(--blue);
+  text-align: left;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 370px;
+}
+
+.development-item p {
+  font: 400 15px Geologica;
+  text-align: left;
+  margin-bottom: 10px;
+  color: #6d6a6a;
+}
+
+.development-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.development-actions button {
+  padding: 7px 12px;
+  background-color: var(--blue);
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  color: #ffffff;
+  font: 300 15px Geologica;
+  cursor: pointer;
+}
+
+.development-actions button:hover {
+  background-color: #4878b0;
+}
+
+/* Стили для истории скачиваний */
+.downloads-list {
+  list-style: none;
+  padding: 0;
+}
+
+.downloads-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+/* Стили для модального окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+#editTagsContainer label {
+  font-weight: 300;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font: 300 15px Geologica;
+}
+
+.form-group textarea {
+  min-height: 100px;
+
+  max-width: 600px;
+  min-width: 600px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 15px;
+  background-color: #5b8dc8;
+  font: 600 15px Geologica;
+  border-radius: 5px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.modal-actions button:hover {
+  background-color: #4878b0;
+}
+
+#editModal h3 {
+  font: 600 24px Geologica;
+  margin-bottom: 30px;
+}
+
+/* Стили для ссылок в заголовках */
+.development-item h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.development-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.downloads-list li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.downloads-list li a:hover {
+  text-decoration: underline;
+}
+
+/* Добавим стили для чекбоксов тегов */
+.tags-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-checkbox {
+  display: flex;
+  align-items: baseline;
+}
+.no-tags {
+  color: #999;
+  font-style: italic;
+}

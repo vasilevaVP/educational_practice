@@ -4,168 +4,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://db.onlinewebfonts.com/c/4674c29fede917b1695c03e730aa503c?family=TraktorMoodFont"
-        rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/rest.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/profile.css">
     <title>УчительPRO: Профиль</title>
     <link rel="icon" href="./img/iconlogo.ico">
+
 </head>
+
 <body>
-    <header>
-        <div class="logo"><a href="/index"><img src="./img/logo1.svg" alt=""></div></a>
-        <div class="nav">
-            <ul>
-                <a href="/index">
-                    <li>Главная</li>
-                </a>
-                <a href="/about_us">
-                    <li>О нас</li>
-                </a>
-                <a href="/catalog">
-                    <li>Каталог</li>
-                </a>
-            </ul>
-        </div>
-        <div class="navbt">
-            <% if (user) { %>
-                <% if (user.role === 'admin') { %>
-                   <a href="/admin">
-                    <li>Админ-панель</li> 
-                   </a>
-                <% } else { %>
-                    <a href="/profile">
-                        <img src="./img/lk.svg" alt="">
-                    </a>
-                <% } %>
-            <% } else { %>
-                  <a href="/login">
-                    <li>Авторизация/Регистрация</li> 
-                </a>
-           <% } %>
-            <form action="/addDevelopment">
-                <button>+ Новый материал</button>
-            </form>
-        </div>
-    </header>
-<div class="profile-container">
-    <h2>Личный кабинет</h2>
-    <% if (user) { %>
-        <p>Добро пожаловать, <%= user.fullName %>!</p>
-        <p><a href="/logout">Выйти</a></p>
-    <% } else { %>
-        <p>Вы не авторизованы.</p>
-        <a href="/login"></a>
-    <% } %>
-        <div class="tabs">
-            <button id="developmentsTabBtn">Мои разработки</button>
-            <button id="downloadsTabBtn">История скачиваний</button>
-        </div>
-    
-        <div id="developmentsTab" class="tab active"></div>
-        <div id="downloadsTab" class="tab"></div>
+    <%- include('partials/header', {user: user}) %>
+    <main>
+    <div class="profile-container">
+      <h2>Личный кабинет</h2>
+      <% if (user) { %>
+          <p>Добро пожаловать, <%= user.fullName %>! (<a href="/logout">Выйти</a>)</p>
+      <% } else { %>
+          <p>Вы не авторизованы. <a href="/login">Войти</a></p>
+      <% } %>
+      
+      <div class="tabs">
+          <button class="tab-btn active" data-tab="developments">Мои разработки</button>
+          <button class="tab-btn" data-tab="downloads">История скачиваний</button>
+      </div>
+      
+      <!-- Вкладка с разработками -->
+      <div id="developments" class="tab-content active">
+        <% if (developments && developments.length > 0) { %>
+            <div class="developments-list">
+                <% developments.forEach(dev => { %>
+                    <div class="development-item" data-id="<%= dev.id %>">
+                        <h3><a href="/card?id=<%= dev.id %>"><%= dev.title %></a></h3>
+                        <p><strong>Категория:</strong> <%= dev.category.name %></p>
+                        <div class="tags">
+                            <% if (dev.tags && dev.tags.length > 0) { %>
+                                <% dev.tags.forEach(tag => { %>
+                                    <span class="tag"><%= tag.name %></span>
+                                <% }); %>
+                            <% } else { %>
+                                <span class="no-tags">Нет тегов</span>
+                            <% } %>
+                        </div>
+                        <div class="development-actions">
+                            <button class="edit-dev-btn" data-id="<%= dev.id %>">Редактировать</button>
+                            <button class="delete-dev-btn" data-id="<%= dev.id %>">Удалить</button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>У вас пока нет разработок. <a href="/addDevelopment">Добавить свою первую разработку</a></p>
+        <% } %>
+    </div>
 
-</div>
+      <!-- Вкладка с историей скачиваний -->
+      <div id="downloads" class="tab-content">
+        <% if (downloads && downloads.length > 0) { %>
+            <ul class="downloads-list">
+                <% downloads.forEach(download => { %>
+                    <li>
+                        <a href="/card?id=<%= download.development.id %>"><%= download.development.title %></a>
+                        <span class="download-date">
+                            <%= new Date(download.download_date).toLocaleDateString() %>
+                        </span>
+                        <a href="/download/<%= download.development.id %>" class="download-again">
+                            Скачать снова
+                        </a>
+                    </li>
+                <% }); %>
+           
+        <% } else { %>
+            <p>Вы еще ничего не скачивали<a href="/catalog"> Скачать свою первую разработку</a></p>
+        <% } %> 
+    </ul>
+    </div>
 
-<footer>
-</div>
-<div class="two">
-    <div class="quecoop">
-        <img src="./img/logo2.svg" alt="">
-        <div class="question">
-            <p>По всем вопросам:</p>
-            <p>teacherpro@mail.ru</p>
-        </div>
-    </div>
-    <div class="nn">
-        <div class="navi">
-            <ul>
-                <a href="/index">
-                    <li>Главная</li>
-                </a>
-                <a href="/about_us">
-                    <li>О нас</li>
-                </a>
-                <a href="/catalog">
-                    <li>Каталог</li>
-                </a>
-                <a href="/addDevelopment">
-                    <li>Ваши разработки</li>
-                </a>
-            </ul>
-        </div>
-        <div class="navi2">
-            <ul>
-                <li>Поддержка</li>
-                <li>Вопросы</li>
-                <li>Документация</li>
-                <li>Сотрудничество</li>
-            </ul>
-        </div>
-    </div>
-    <div class="three">
-        <img src="./img/vk.svg" alt="">
-        <img src="./img/youtube.svg" alt="">
-        <img src="./img/telegram.svg" alt="">
+  
+  <!-- Модальное окно для редактирования -->
+  <div id="editModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <h3>Редактировать разработку</h3>
+        <form id="editDevelopmentForm" enctype="multipart/form-data">
+            <input type="hidden" id="editDevId" name="id">
+            <div class="form-group">
+                <label for="editTitle">Название:</label>
+                <input type="text" id="editTitle" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="editDescription">Описание:</label>
+                <textarea id="editDescription" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Теги:</label>
+                <div id="editTagsContainer" class="tags-checkboxes"></div>
+            </div>
+            <div class="form-group">
+                <label for="editPreview">Превью (оставьте пустым, если не хотите менять):</label>
+                <input type="file" id="editPreview" name="preview" accept=".jpg,.jpeg,.png">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-edit">Отмена</button>
+                <button type="submit">Сохранить</button>
+            </div>
+        </form>
     </div>
 </div>
-</footer>
+</div>
+</main>
+<%- include('partials/footer') %>
 
 <script>
-    const userId = `<%= user ? user.id : null %>`;
+  // Переключение между вкладками
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
 
-    document.getElementById('developmentsTabBtn').addEventListener('click', () => loadDevelopments(userId));
-    document.getElementById('downloadsTabBtn').addEventListener('click', () => loadDownloads(userId));
-
-    async function loadDevelopments(userId) {
-        const developmentsList = document.getElementById('developmentsTab');
-        developmentsList.innerHTML = ''; // очищаем
-
-        const response = await fetch(`/user/developments/${userId}`);
-        const developments = await response.json();
-
-        if (developments.length === 0) {
-            developmentsList.innerHTML = `<p>У вас пока нет загрузок, <a href="/addDevelopment">загрузите первую разработку</a>.</p>`;
-        } else {
-            developments.forEach(dev => {
-                developmentsList.innerHTML += `<div>${dev.title}</div>`;
-            });
-        }
-        showTab('developmentsTab');
-    }
-
-    async function loadDownloads(userId) {
-        const downloadsList = document.getElementById('downloadsTab');
-        downloadsList.innerHTML = ''; // очищаем
-
-        const response = await fetch(`/user/downloads/${userId}`);
-        const downloads = await response.json();
-
-        if (downloads.length === 0) {
-            downloadsList.innerHTML = `<p>У вас пока нет скаченных разработок, <a href="/catalog">скачать первую разработку</a>.</p>`;
-        } else {
-            downloads.forEach(download => {
-                downloadsList.innerHTML += `<div>Скачано: ${download.development.title} (Дата: ${new Date(download.download_date).toLocaleDateString()})</div>`;
-            });
-        }
-        showTab('downloadsTab');
-    }
-
-    function showTab(tabId) {
-        document.querySelectorAll(".tab").forEach(tab => {
-            tab.classList.remove("active");
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(tabId).classList.add('active');
+      });
+  });
+  
+  // Удаление разработки
+  document.querySelectorAll('.delete-dev-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+          const devId = this.getAttribute('data-id');
+          if (confirm('Вы уверены, что хотите удалить эту разработку?')) {
+              try {
+                  const response = await fetch(`/user/developments/delete/${devId}`, {
+                      method: 'POST'
+                  });
+                  const data = await response.json();
+                  
+                  if (data.success) {
+                      document.querySelector(`.development-item[data-id="${devId}"]`).remove();
+                  } else {
+                      alert(data.error || 'Ошибка удаления');
+                  }
+              } catch (error) {
+                  console.error('Ошибка:', error);
+                  alert('Ошибка соединения');
+              }
+          }
+      });
+  });
+  
+  // Открытие модального окна для редактирования
+  document.querySelectorAll('.edit-dev-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const devId = this.getAttribute('data-id');
+            
+            try {
+                // Загружаем данные разработки
+                const response = await fetch(`/user/developments/edit/${devId}`);
+                const data = await response.json();
+                
+                if (data.development) {
+                    // Заполняем форму в модальном окне
+                    document.getElementById('editDevId').value = data.development.id;
+                    document.getElementById('editTitle').value = data.development.title;
+                    document.getElementById('editDescription').value = data.development.description || '';
+                    
+                    // Заполняем теги
+                    const tagsContainer = document.getElementById('editTagsContainer');
+                    tagsContainer.innerHTML = '';
+                    
+                    data.tags.forEach(tag => {
+                        const isChecked = data.development.tags.some(t => t.id === tag.id);
+                        const div = document.createElement('div');
+                        div.className = 'tag-checkbox';
+                        div.innerHTML = `
+                            <input type="checkbox" name="tags" value="${tag.id}" id="editTag${tag.id}" ${isChecked ? 'checked' : ''}>
+                            <label for="editTag${tag.id}">${tag.name}</label>
+                        `;
+                        tagsContainer.appendChild(div);
+                    });
+                    
+                    // Показываем модальное окно
+                    document.getElementById('editModal').style.display = 'flex';
+                } else {
+                    alert(data.error || 'Ошибка загрузки данных');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка соединения');
+            }
         });
-        document.getElementById(tabId).classList.add("active");
-    }
-
-    // При загрузке страницы по умолчанию загружаем разработки
-    if (userId) {
-        loadDevelopments(userId);
-    }
-
+    });
+  
+  // Закрытие модального окна
+  document.querySelector('.close-modal').addEventListener('click', function() {
+      document.getElementById('editModal').style.display = 'none';
+  });
+  
+  document.querySelector('.cancel-edit').addEventListener('click', function() {
+      document.getElementById('editModal').style.display = 'none';
+  });
+  
+  // Сохранение изменений
+  document.getElementById('editDevelopmentForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const devId = formData.get('id');
+      
+      try {
+          const response = await fetch(`/user/developments/update/${devId}`, {
+              method: 'POST',
+              body: formData
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+              alert('Изменения сохранены');
+              location.reload(); // Обновляем страницу
+          } else {
+              alert(data.error || 'Ошибка сохранения');
+          }
+      } catch (error) {
+          console.error('Ошибка:', error);
+          alert('Ошибка соединения');
+      }
+  });
 </script>
 </body>
 </html>

@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://db.onlinewebfonts.com/c/4674c29fede917b1695c03e730aa503c?family=TraktorMoodFont"
-        rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
@@ -16,129 +14,37 @@
 </head>
 
 <body>
-    <header>
-        <div class="logo"><a href="/index"><img src="./img/logo1.svg" alt=""></div></a>
-        <div class="nav">
-            <ul>
-                <a href="/index">
-                    <li>Главная</li>
-                </a>
-                <a href="/about_us">
-                    <li>О нас</li>
-                </a>
-                <a href="/catalog">
-                    <li>Каталог</li>
-                </a>
-            </ul>
-        </div>
-        <div class="navbt">
-            <% if (user) { %>
-                <% if (user.role === 'admin') { %>
-                   <a href="/admin">
-                    <li>Админ-панель</li> 
-                   </a>
-                <% } else { %>
-                    <a href="/profile">
-                        <img src="./img/lk.svg" alt="">
-                    </a>
-                <% } %>
-            <% } else { %>
-                  <a href="/login">
-                    <li>Авторизация/Регистрация</li> 
-                </a>
-           <% } %>
-            <form action="/addDevelopment">
-                <button>+ Новый материал</button>
-            </form>
-        </div>
-    </header>
-
-<body>
- <section12>
+    <%- include('partials/header', {user: user}) %>
+<main>
         <div class="banner2">
             <a href="/addDevelopment"><img src="./img/banner1.gif" alt="Баннер"></a>
         </div>
-    </section12>
-    <section21>
-        
-        <div class="prew">
-            <img src="<%= development.preview%>" alt="Превью" width="500">
-        </div>
+    <section id="cardDevelopmentInfo">
+        <div class="prew"><img src="<%= development.preview%>" alt="Превью" width="500"></div>
         <div class="info">
-            <h1>
-                <%= development.title %>
-            </h1>
+            <h1><%= development.title %></h1>
             <div class="categteg">
-            <p>
-                <%= development.category.name %>
-            </p>
-            <p>
-                <% if (development.tags && development.tags.length > 0) { %>
+            <p><%= development.category.name %></p>
+            <p><% if (development.tags && development.tags.length > 0) { %>
                     <% development.tags.forEach(tag => { %>
                         <%= tag.name %>,
                     <% }); %>
                 <% } else { %>
                     Нет тегов
-                <% } %>
-            </p>
+                <% } %></p>
         </div>
             <div class="bs">
-                <a href="<%= development.file_path %>" download>
+                <a href="/download/<%= development.id %>">
                     <button>Скачать</button>
-                </a>
+                  </a>
             </div>
         </div>
-    </section21>
-
+    </section>
     <div class="opis">
-        <p><b>Описание:</b><br>
-            <%= development.description %>
-        </p>
+        <p><b>Описание:</b><br><%= development.description %></p>
     </div>
-    
-    <footer>
-    </div>
-    <div class="two">
-        <div class="quecoop">
-            <img src="./img/logo2.svg" alt="">
-            <div class="question">
-                <p>По всем вопросам:</p>
-                <p>teacherpro@mail.ru</p>
-            </div>
-        </div>
-        <div class="nn">
-            <div class="navi">
-                <ul>
-                    <a href="/index">
-                        <li>Главная</li>
-                    </a>
-                    <a href="/about_us">
-                        <li>О нас</li>
-                    </a>
-                    <a href="/catalog">
-                        <li>Каталог</li>
-                    </a>
-                    <a href="/addDevelopment">
-                        <li>Ваши разработки</li>
-                    </a>
-                </ul>
-            </div>
-            <div class="navi2">
-                <ul>
-                    <li>Поддержка</li>
-                    <li>Вопросы</li>
-                    <li>Документация</li>
-                    <li>Сотрудничество</li>
-                </ul>
-            </div>
-        </div>
-        <div class="three">
-            <img src="./img/vk.svg" alt="">
-            <img src="./img/youtube.svg" alt="">
-            <img src="./img/telegram.svg" alt="">
-        </div>
-    </div>
-</footer>
+</main>    
+    <%- include('partials/footer') %>
 </body>
 
 </html>
