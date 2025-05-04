@@ -4,8 +4,8 @@
   --blue: #5b8dc8;
   --text: #000000;
   --h2-color: #200e49;
-  --h2: 600 40px Geologica;
-  --p: 200 20px Geologica;
+  --h2: 600 32px Geologica;
+  --p: 200 18px Geologica;
 }
 
 body {
@@ -64,6 +64,10 @@ header {
 
 .nav-list a:hover {
   color: #7864c9;
+}
+
+.profile-item {
+  margin-left: 160px;
 }
 
 .profile-icon {
@@ -432,12 +436,13 @@ main h2 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(120, 100, 201, 0.2);
-  color: white;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
+  color: #9785e2;
   border-radius: 10px;
   padding: 15px 10px;
   cursor: pointer;
+  font-size: 40px;
   z-index: 10;
 }
 
@@ -820,42 +825,140 @@ input::-webkit-input-placeholder {
   margin-bottom: 40px;
 }
 
-#contacts {
-  width: 1180px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+#servis {
+  max-width: 822px;
+  text-align: center;
   margin: 0 auto;
-  margin-bottom: 300px;
+  margin-bottom: 200px;
+  font: var(--p);
+}
+#servis p {
+  margin-bottom: 10px;
 }
 
+#servis .cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
 .m {
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.txt h2 {
-  font: var(--h2);
-  color: var(--h2-color);
-  text-align: left;
-  margin: 0 0 15px 0;
-}
-
-.txt p {
-  font: 200 28px Geologica;
-  color: var(--text);
-  text-align: left;
-  margin-bottom: 50px;
-}
-
 .m p {
-  font: 400 20px Geologica;
+  font: var(--p);
+  font-weight: 400;
   color: var(--text);
   text-align: left;
-  margin: 0;
+  margin-top: 10px;
+}
+
+/* Адаптивные стили для страницы "О нас" */
+
+@media (max-width: 1024px) {
+  /* Стили для планшетов */
+  .stor1,
+  .stor2 {
+    flex-direction: column;
+    padding: 20px !important;
+    margin-bottom: 80px;
+  }
+
+  .stor2 {
+    flex-direction: column-reverse;
+  }
+  .banner img {
+    width: 100%;
+  }
+  .text {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .imgstor img {
+    width: 100%;
+    height: auto;
+  }
+
+  .cards {
+    margin-bottom: 80px;
+  }
+
+  .cr {
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .card1 {
+    padding: 30px;
+    height: auto;
+  }
+
+  #servis {
+    margin-bottom: 100px;
+    padding: 0 20px;
+  }
+
+  #servis .cont {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Стили для мобильных устройств */
+  .stor1,
+  .stor2 {
+    margin-bottom: 60px;
+  }
+
+  #history h2,
+  section h2,
+  #servis h2 {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .banner img {
+    width: 100%;
+    height: auto;
+  }
+
+  .card1 {
+    padding: 20px;
+  }
+
+  .cr {
+    flex-direction: column;
+  }
+  .cards h3 {
+    font-size: 20px;
+  }
+
+  .cards p {
+    font-size: 14px;
+    width: 80%;
+  }
+
+  #servis {
+    margin-bottom: 80px;
+  }
+
+  .m {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .m p {
+    text-align: center !important;
+  }
 }
 
 /*Каталог*/
@@ -1015,7 +1118,128 @@ h2 {
   cursor: pointer;
 }
 
-/*Добавление*/
+@media (max-width: 1200px) {
+  /* Стили для небольших ноутбуков */
+  .formaCatalog,
+  #catalogContainer {
+    width: 90%;
+  }
+
+  .cardct {
+    width: 30%;
+  }
+}
+
+@media (max-width: 992px) {
+  /* Стили для планшетов */
+  .formaCatalog {
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .banner2 img {
+    width: 100%;
+  }
+
+  .filtr {
+    gap: 20px;
+  }
+
+  .ooo {
+    gap: 15px;
+  }
+
+  #catalogContainer {
+    gap: 25px;
+    justify-content: center;
+  }
+
+  .cardct {
+    width: 45%;
+  }
+
+  .cardct .title {
+    max-width: 100%;
+  }
+
+  .ctbutton {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bs button,
+  .bp button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Стили для мобильных устройств */
+  h2 {
+    margin-top: 40px;
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .formaCatalog input {
+    width: 100%;
+  }
+
+  .banner2 img {
+    width: 100%;
+    height: auto;
+  }
+
+  #catalogContainer {
+    margin-top: 40px;
+    margin-bottom: 150px;
+  }
+
+  .cardct {
+    width: 100%;
+  }
+
+  .cardct img {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .cardct .title {
+    font-size: 16px;
+  }
+
+  .cardct .category,
+  .tag {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Дополнительные стили для очень маленьких экранов */
+  .formaCatalog input {
+    height: 50px;
+    font-size: 14px;
+  }
+
+  .subs button {
+    height: 50px;
+    padding: 8px;
+  }
+
+  .ooo select {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  #catalogContainer {
+    gap: 20px;
+  }
+
+  .ctbutton button {
+    height: 45px;
+    font-size: 14px;
+  }
+}
 
 /*Карточка ресурса*/
 
