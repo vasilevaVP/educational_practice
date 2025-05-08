@@ -21,24 +21,29 @@
             <% if (user) { %>
                 <li class="profile-item">
                     <a href="/profile">
-                        <img src="./img/lk.svg" alt="" class="profile-icon">
-                        <% if (user.role === 'admin') { %>
-                            <span class="nav-text">Админ</span>
+
+                        <% if (user.role === 'admin') { %> 
+                           <a href="/admin"> <span class="nav-text" >Админ</span></a>
                         <% } else { %>
+                            <img src="./img/lk.svg" alt="" class="profile-icon">
                             <span class="nav-text">Профиль</span>
                         <% } %>
-                    </a>
+                   </a>
                 </li>
             <% } else { %>
                 <li><a href="/login" class="login-btn">Войти</a></li>
             <% } %>
         </ul>
         <!-- Кнопка "Новый материал" внутри меню -->
-        <form action="/addDevelopment" class="nav-form">
-            <button type="submit">+ Новый материал</button>
-        </form>
+                
+  <a href="/addDevelopment" data-role="<%= user ? user.role : '' %>" class="add-dev-btn"> 
+  <button> + Новый материал</button>
+</a>
+
     </nav>
-    <script>const burgerMenu = document.getElementById('burgerMenu');
+    <script>
+
+    const burgerMenu = document.getElementById('burgerMenu');
         const mainNav = document.getElementById('mainNav');
         
         burgerMenu.addEventListener('click', function() {
@@ -52,5 +57,42 @@
                 burgerMenu.classList.remove('active');
                 mainNav.classList.remove('active');
             });
-        });</script>
+        });
+
+
+        // Функция для показа уведомления
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  // Показываем уведомление
+  setTimeout(() => notification.classList.add('show'), 100);
+  
+  // Скрываем через 3 секунды
+  setTimeout(() => {
+    notification.classList.remove('show');
+    notification.classList.add('hide');
+    
+    // Удаляем из DOM после анимации
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Проверяем роль пользователя при клике на кнопку "Добавить разработку"
+document.addEventListener('DOMContentLoaded', function() {
+  const addDevBtn = document.querySelector('a[href="/addDevelopment"]');
+  
+  if (addDevBtn) {
+    addDevBtn.addEventListener('click', function(e) {
+      // Проверяем, является ли пользователь учеником (это можно сделать через data-атрибут)
+      if (this.dataset.role === 'student') {
+        e.preventDefault(); // Отменяем переход
+        showNotification('Эта функция доступна только учителям');
+      }
+    });
+  }
+});
+        </script>
 </header>

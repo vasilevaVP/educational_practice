@@ -4,6 +4,7 @@ const session = require("express-session");
 const { Sequelize, DataTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
+const fs = require("fs");
 const path = require("path");
 
 const app = express();
@@ -78,6 +79,10 @@ const User = sequelize.define(
         model: Role,
         key: "id",
       },
+    },
+    profession: {
+      type: DataTypes.STRING,
+      allowNull: true, // Только для учителей
     },
   },
   { timestamps: false }
@@ -256,7 +261,7 @@ const Subscription = sequelize.define(
     },
   },
   {
-    timestamps: true,
+    timestamps: false,
     tableName: "subscriptions",
   }
 );
@@ -292,6 +297,43 @@ const DevelopmentTags = sequelize.define(
     tableName: "development_tags",
   }
 );
+
+// Модель для токенов сброса пароля
+const PasswordResetToken = sequelize.define(
+  "PasswordResetToken",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    token: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id",
+      },
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: false,
+    tableName: "password_reset_tokens",
+  }
+);
+
+// Связь с пользователем
+User.hasMany(PasswordResetToken, { foreignKey: "userId" });
+PasswordResetToken.belongsTo(User, { foreignKey: "userId" });
 
 // Определение связей
 Role.hasMany(User, { foreignKey: "roleId" });
@@ -360,7 +402,10 @@ DownloadHistory.belongsTo(Development, {
 sequelize
   .sync({ force: false })
   .then(async () => {
-    console.log("База данных синхронизирована");
+    const roles = ["admin", "teacher", "student"];
+    for (const roleName of roles) {
+      await Role.findOrCreate({ where: { name: roleName } });
+    }
 
     // Создаем роли если их еще нет
     const userRole = await Role.findOrCreate({
@@ -428,6 +473,51 @@ function hasRole(roleName) {
     }
   };
 }
+
+// Проверка, что пользователь учитель
+function isTeacher(req, res, next) {
+  if (!req.session.user) return res.redirect("/login");
+
+  User.findByPk(req.session.user.id, {
+    include: Role,
+  }).then((user) => {
+    if (user && user.Role.name === "teacher") {
+      next();
+    } else {
+      // Для учеников показываем сообщение и редиректим обратно
+      req.session.notification = {
+        message: "Эта функция доступна только учителям",
+        type: "error",
+      };
+      res.redirect("back");
+    }
+  });
+}
+
+// Проверка, что пользователь ученик
+function isStudent(req, res, next) {
+  if (!req.session.user) return res.redirect("/login");
+
+  User.findByPk(req.session.user.id, {
+    include: Role,
+  }).then((user) => {
+    if (user && user.Role.name === "student") {
+      next();
+    } else {
+      res.status(403).send("Эта функция доступна только ученикам");
+    }
+  });
+}
+
+// После рендеринга любой страницы
+app.use((req, res, next) => {
+  if (req.session.notification) {
+    const notification = req.session.notification;
+    delete req.session.notification;
+    res.locals.notification = notification;
+  }
+  next();
+});
 
 // Маршруты
 
@@ -538,15 +628,46 @@ app.get("/download/:id", isAuthenticated, async (req, res) => {
       developmentId: development.id,
     });
 
-    // Отправляем файл для скачивания
+    // Получаем путь к файлу
     const filePath = path.join(__dirname, "public", development.file_path);
-    res.download(filePath);
+
+    // Проверяем существование файла
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send("Файл не найден на сервере");
+    }
+
+    // Получаем расширение файла
+    const fileExt = path.extname(development.file_path);
+
+    // Создаем красивое имя файла
+    const cleanTitle = development.title
+      .replace(/[^\w\sа-яА-Я]/gi, "") // Разрешаем буквы, цифры, пробелы и кириллицу
+      .replace(/\s+/g, "_") // Заменяем пробелы на подчеркивания
+      .toLowerCase(); // Приводим к нижнему регистру (опционально)
+
+    const downloadFileName = `${cleanTitle}${fileExt}`;
+
+    // Устанавливаем заголовки для корректной обработки кириллицы
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename*=UTF-8''${encodeURIComponent(downloadFileName)}`
+    );
+    res.setHeader("Cache-Control", "no-cache");
+
+    // Отправляем файл
+    res.download(filePath, downloadFileName, (err) => {
+      if (err) {
+        console.error("Ошибка при отправке файла:", err);
+        if (!res.headersSent) {
+          res.status(500).send("Ошибка при скачивании файла");
+        }
+      }
+    });
   } catch (error) {
     console.error("Ошибка при скачивании:", error);
     res.status(500).send("Ошибка сервера");
   }
 });
-
 // Роут для страницы о нас
 app.get("/about_us", async (req, res) => {
   res.render("about_us", { user: req.session.user });
@@ -559,19 +680,24 @@ app.get("/register", async (req, res) => {
 
 // Роут для страницы добавления разработки
 app.get("/addDevelopment", isAuthenticated, async (req, res) => {
-  try {
-    const categories = await Category.findAll();
-    const tags = await Tag.findAll();
-    res.render("addDevelopment", {
-      user: req.session.user,
-      error: null,
-      categories,
-      tags,
-    });
-  } catch (error) {
-    console.error("Ошибка при загрузке формы:", error);
-    res.status(500).send("Ошибка сервера");
+  // Проверяем роль прямо в контроллере
+  const user = await User.findByPk(req.session.user.id, {
+    include: Role,
+  });
+
+  if (user.Role.name !== "teacher") {
+    return res.redirect("/profile");
   }
+
+  // Продолжаем обработку для учителей
+  const categories = await Category.findAll();
+  const tags = await Tag.findAll();
+  res.render("addDevelopment", {
+    user: req.session.user,
+    error: null,
+    categories,
+    tags,
+  });
 });
 
 // Роут для получения разработок пользователя
@@ -803,6 +929,7 @@ app.post(
 app.post(
   "/user/add/development",
   isAuthenticated,
+  isTeacher,
   upload.fields([
     { name: "preview", maxCount: 1 },
     { name: "file_path", maxCount: 1 },
@@ -999,26 +1126,66 @@ app.get("/admin/tags", isAuthenticated, hasRole("admin"), async (req, res) => {
 
 // Роут для обработки регистрации
 app.post("/register", async (req, res) => {
-  const { fullName, email, password, confirmPassword } = req.body;
+  const { fullName, email, password, confirmPassword, userType, profession } =
+    req.body;
 
+  // Валидация пароля
+  if (password.length < 8) {
+    return res.render("register", {
+      user: req.session.user,
+      error: "Пароль должен содержать минимум 8 символов",
+    });
+  }
+
+  if (!/\d/.test(password)) {
+    return res.render("register", {
+      user: req.session.user,
+      error: "Пароль должен содержать хотя бы одну цифру",
+    });
+  }
+
+  if (!/[a-zA-Zа-яА-Я]/.test(password)) {
+    return res.render("register", {
+      user: req.session.user,
+      error: "Пароль должен содержать хотя бы одну букву",
+    });
+  }
   if (password !== confirmPassword) {
     return res.render("register", {
       user: req.session.user,
       error: "Пароли не совпадают",
     });
   }
+
+  if (userType === "teacher" && !profession) {
+    return res.render("register", {
+      user: req.session.user,
+      error: "Укажите вашу профессию",
+    });
+  }
+
   try {
-    const role = await Role.findOne({ where: { name: "user" } });
+    const role = await Role.findOne({ where: { name: userType } });
     if (!role) {
       return res.status(400).send("Роль не найдена");
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({
+    const userData = {
       fullName,
       email,
       password: hashedPassword,
       roleId: role.id,
-    });
+    };
+
+    // Добавляем профессию только для учителей
+    if (userType === "teacher") {
+      userData.profession = profession;
+    }
+
+    const newUser = await User.create(userData);
+    await Profile.create({ userId: newUser.id });
+
     res.redirect("/login");
   } catch (error) {
     let message = "Ошибка регистрации";
@@ -1027,7 +1194,6 @@ app.post("/register", async (req, res) => {
     } else if (error.errors) {
       message = error.errors.map((err) => err.message).join(", ");
     }
-    console.error("Ошибка регистрации:", error);
     res.render("register", { user: req.session.user, error: message });
   }
 });
@@ -1133,6 +1299,157 @@ app.get("/profile", isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error("Ошибка получения профиля:", error);
     res.status(500).send("Ошибка сервера");
+  }
+});
+
+// Роут для страницы "Забыли пароль"
+app.get("/forgot-password", (req, res) => {
+  res.render("forgot-password", {
+    user: req.session.user,
+    error: null,
+    success: null,
+  });
+});
+
+// Роут для обработки запроса на сброс пароля
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.render("forgot-password", {
+        user: req.session.user,
+        error: "Пользователь с таким email не найден",
+        success: null,
+      });
+    }
+
+    // Генерируем токен
+    const token = require("crypto").randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 3600000); // 1 час
+
+    // Сохраняем токен в базу
+    await PasswordResetToken.create({
+      token,
+      userId: user.id,
+      expiresAt,
+    });
+
+    // Отправляем email с ссылкой (в реальном приложении)
+    const resetLink = `http://${req.headers.host}/reset-password?token=${token}`;
+    console.log(`Ссылка для сброса пароля: ${resetLink}`); // В реальном приложении отправляем email
+
+    res.render("forgot-password", {
+      user: req.session.user,
+      error: null,
+      success: "Ссылка для сброса пароля отправлена на ваш email",
+    });
+  } catch (error) {
+    console.error("Ошибка при запросе сброса пароля:", error);
+    res.render("forgot-password", {
+      user: req.session.user,
+      error: "Произошла ошибка при обработке запроса",
+      success: null,
+    });
+  }
+});
+
+// Роут для страницы сброса пароля
+app.get("/reset-password", async (req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.redirect("/forgot-password");
+  }
+
+  try {
+    const resetToken = await PasswordResetToken.findOne({
+      where: { token },
+      include: User,
+    });
+
+    if (!resetToken || new Date() > resetToken.expiresAt) {
+      return res.render("reset-password", {
+        user: req.session.user,
+        error: "Ссылка для сброса пароля недействительна или истекла",
+        success: null,
+        token: null,
+      });
+    }
+
+    res.render("reset-password", {
+      user: req.session.user,
+      error: null,
+      success: null,
+      token,
+    });
+  } catch (error) {
+    console.error("Ошибка при проверке токена:", error);
+    res.render("reset-password", {
+      user: req.session.user,
+      error: "Произошла ошибка при проверке токена",
+      success: null,
+      token: null,
+    });
+  }
+});
+
+// Роут для обработки сброса пароля
+app.post("/reset-password", async (req, res) => {
+  const { token, password, confirmPassword } = req.body;
+
+  if (!token) {
+    return res.redirect("/forgot-password");
+  }
+
+  if (password !== confirmPassword) {
+    return res.render("reset-password", {
+      user: req.session.user,
+      error: "Пароли не совпадают",
+      success: null,
+      token,
+    });
+  }
+
+  try {
+    const resetToken = await PasswordResetToken.findOne({
+      where: { token },
+      include: User,
+    });
+
+    if (!resetToken || new Date() > resetToken.expiresAt) {
+      return res.render("reset-password", {
+        user: req.session.user,
+        error: "Ссылка для сброса пароля недействительна или истекла",
+        success: null,
+        token: null,
+      });
+    }
+
+    // Обновляем пароль
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await resetToken.User.update({ password: hashedPassword });
+
+    // Удаляем использованный токен
+    await resetToken.destroy();
+
+    res.render("reset-password", {
+      user: req.session.user,
+      error: null,
+      success:
+        "Пароль успешно изменен. Теперь вы можете войти с новым паролем.",
+      token: null,
+    });
+  } catch (error) {
+    console.error("Ошибка при сбросе пароля:", error);
+    res.render("reset-password", {
+      user: req.session.user,
+      error: "Произошла ошибка при сбросе пароля",
+      success: null,
+      token,
+    });
   }
 });
 

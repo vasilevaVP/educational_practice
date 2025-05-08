@@ -17,6 +17,7 @@
             align-items: center;
             text-align: center;
             height: 100vh;
+            font: 200 15px Geologica;
             background-color: #eeeadf;
             margin: 0;
         }
@@ -26,7 +27,7 @@
             padding: 40px;
             border-radius: 10px;
             width: 643px;
-            height: 534px;
+            height: auto;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
@@ -145,6 +146,26 @@
   cursor: pointer;
 }
 
+.user-type-selector{
+    margin-bottom: 10px;
+}
+.password-rules {
+    font-size: 12px;
+    color: #666;
+margin-left: 140px;
+    text-align: left;
+}
+
+.password-rules ul {
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+.password-rules li.valid {
+    color: green;
+    text-decoration: line-through;
+}
+
     </style>
 <body>
     
@@ -155,58 +176,125 @@
         <p class="error"><%= error %></p>
         <% } %>
         <form method="post" action="/register">
+                        <!-- Выбор типа пользователя -->
+                        <div class="user-type-selector">
+                            <label>
+                                <input type="radio" name="userType" value="teacher" required> Педагог
+                            </label>
+                            <label>
+                                <input type="radio" name="userType" value="student"> Учащийся
+                            </label>
+                        </div>
+                        
+                        <!-- Поле профессии (только для учителей) -->
+                        <div class="input-group profession-field" id="professionField">
+                            <input type="text" id="profession" name="profession" placeholder="Ваша профессия (например, учитель математики)">
+                        </div>
             <div class="input-group">
-               <input type="text" id="fullName" name="fullName" placeholder="Введите ФИО" required
-                 <% if (error && error.includes('ФИО')) {%> class = "invalid" <%}%>>
+                <input type="text" id="fullName" name="fullName" placeholder="Введите ФИО" required>
             </div>
-             <div class="input-group">
-               <input type="email" id="email" name="email" placeholder="Введите почту" required
-                 <% if (error && error.includes('email')) {%> class = "invalid" <%}%>>
+            
+            <div class="input-group">
+                <input type="email" id="email" name="email" placeholder="Введите почту" required>
+            </div>
+            
+            <div class="input-group">
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                    <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <div class="password-container">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required>
+                    <a href="#" class="password-control" onclick="return show_hide_password2(this);"></a>
+                </div>
             </div>
             <div class="input-group">
-              <div class="password-container">
-                <input type="password" id="password" name="password" placeholder="Введите пароль" required
-                 <% if (error && error.includes('Пароль')) {%> class = "invalid" <%}%>>
-                 <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
-              </div>
+                <div class="password-rules">
+                    <p>Пароль должен содержать:</p>
+                    <ul>
+                        <li id="length-rule">Минимум 8 символов</li>
+                        <li id="digit-rule">Хотя бы 1 цифру</li>
+                        <li id="letter-rule">Хотя бы 1 букву</li>
+                    </ul>
+                </div>
             </div>
-            <div class="input-group">
-              <div class="password-container">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required
-                  <% if (error && error.includes('Пароли не совпадают')) {%> class = "invalid" <%}%>>
-                  <a href="#" class="password-control" onclick="return show_hide_password2(this);"></a>
-              </div>
-             </div>
+            
+            <p class="terms-text">
+                Регистрируясь, вы соглашаетесь с обработкой персональных данных
+            </p>
+            
             <input type="submit" value="Зарегистрироваться">
         </form>
-          <div class="auth-link">
-             <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
-          </div>
+        
+        <div class="auth-link">
+            <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+        </div>
     </div>
-        <script>
-    function show_hide_password(target){
-	const input = document.getElementById('password');
-	if (input.getAttribute('type') == 'password') {
-		target.classList.add('view');
-		input.setAttribute('type', 'text');
-	} else {
-		target.classList.remove('view');
-		input.setAttribute('type', 'password');
-	}
-	return false;
-}
 
-function show_hide_password2(target){
-	const input = document.getElementById('confirmPassword');
-	if (input.getAttribute('type') == 'password') {
-		target.classList.add('view');
-		input.setAttribute('type', 'text');
-	} else {
-		target.classList.remove('view');
-		input.setAttribute('type', 'password');
-	}
-	return false;
-}
-</script>
+    <script>
+        // Показываем/скрываем поле профессии
+        document.querySelectorAll('input[name="userType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const professionField = document.getElementById('professionField');
+                if (this.value === 'teacher') {
+                    professionField.style.display = 'block';
+                    document.getElementById('profession').setAttribute('required', '');
+                } else {
+                    professionField.style.display = 'none';
+                    document.getElementById('profession').removeAttribute('required');
+                }
+            });
+        });
+        
+// Валидация пароля в реальном времени
+document.getElementById('password').addEventListener('input', function() {
+    const password = this.value;
+    const lengthValid = password.length >= 8;
+    const hasDigit = /\d/.test(password);
+    const hasLetter = /[a-zA-Zа-яА-Я]/.test(password);
+    
+    document.getElementById('length-rule').classList.toggle('valid', lengthValid);
+    document.getElementById('digit-rule').classList.toggle('valid', hasDigit);
+    document.getElementById('letter-rule').classList.toggle('valid', hasLetter);
+});
+
+// Проверка перед отправкой формы
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    
+    if (password.length < 8 || !/\d/.test(password) || !/[a-zA-Zа-яА-Я]/.test(password)) {
+        e.preventDefault();
+        alert('Пароль не соответствует требованиям');
+    }
+});
+
+        // Остальные функции остаются без изменений
+        function show_hide_password(target) {
+            const input = document.getElementById('password');
+            if (input.getAttribute('type') == 'password') {
+                target.classList.add('view');
+                input.setAttribute('type', 'text');
+            } else {
+                target.classList.remove('view');
+                input.setAttribute('type', 'password');
+            }
+            return false;
+        }
+        
+        function show_hide_password2(target) {
+            const input = document.getElementById('confirmPassword');
+            if (input.getAttribute('type') == 'password') {
+                target.classList.add('view');
+                input.setAttribute('type', 'text');
+            } else {
+                target.classList.remove('view');
+                input.setAttribute('type', 'password');
+            }
+            return false;
+        }
+    </script>
 </body>
 </html>

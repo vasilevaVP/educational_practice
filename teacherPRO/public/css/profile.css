@@ -13,7 +13,8 @@ body {
 }
 
 main {
-  width: 1180px;
+  width: 100%;
+  max-width: 1180px;
   margin: 0 auto;
   margin-top: 50px;
 }
@@ -27,6 +28,10 @@ main {
   margin-top: 80px;
   margin-bottom: 150px;
   text-align: center;
+  width: 100%;
+  margin: 20px auto;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
 .profile-container h2 {
@@ -42,6 +47,9 @@ main {
   margin-bottom: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 20px;
 }
 
 .tabs button {
@@ -51,6 +59,10 @@ main {
   cursor: pointer;
   font: 400 16px Geologica;
   border-bottom: 3px solid transparent;
+  width: 100%;
+  margin: 5px 0;
+  padding: 12px;
+  text-align: center;
 }
 
 .tabs button.active {
@@ -63,6 +75,7 @@ main {
 
 .tab-content {
   display: none;
+  padding: 10px 0;
 }
 
 .tab-content.active {
@@ -80,7 +93,6 @@ main {
 .tabs button {
   border: none;
   border-radius: 10px;
-  margin-top: 30px;
   font: 500 16px Geologica;
   background-color: #f5f0e7;
   color: var(--fiol);
@@ -228,23 +240,29 @@ main {
   margin-top: 20px;
 }
 
-.modal-actions button {
-  padding: 8px 15px;
-  background-color: #5b8dc8;
-  font: 600 15px Geologica;
-  border-radius: 5px;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.modal-actions button:hover {
-  background-color: #4878b0;
-}
-
 #editModal h3 {
   font: 600 24px Geologica;
   margin-bottom: 30px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.tag {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .tag {
+    font-size: 14px;
+  }
 }
 
 /* Стили для ссылок в заголовках */
@@ -280,4 +298,135 @@ main {
 .no-tags {
   color: #999;
   font-style: italic;
+}
+.modal-actions {
+  gap: 10px;
+}
+
+.modal-actions [type="button"] {
+  background-color: #87a4c5;
+  padding: 8px 15px;
+  font: 600 15px Geologica;
+  border-radius: 5px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+.modal-actions [type="submit"] {
+  background-color: #4878b0;
+  padding: 8px 15px;
+  font: 600 15px Geologica;
+  border-radius: 5px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+.modal-actions button:hover {
+  background-color: #375981;
+}
+
+/* Медиазапросы для планшетов */
+
+@media (max-width: 1180px) {
+  main {
+    width: 95%;
+    padding: 0 2.5%;
+    margin-top: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-container {
+    padding: 25px;
+    margin-top: 50px;
+  }
+
+  .tabs {
+    flex-direction: row;
+  }
+
+  .tabs button {
+    width: auto;
+    margin: 0 10px;
+  }
+
+  .developments-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .development-actions {
+    flex-direction: row;
+  }
+
+  .development-actions button {
+    width: auto;
+  }
+}
+
+/* Медиазапросы для десктопов */
+@media (min-width: 1024px) {
+  .profile-container {
+    padding: 30px;
+  }
+
+  .developments-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .modal-content {
+    width: 80%;
+    max-width: 600px;
+  }
+}
+
+/* Дополнительные адаптивные стили */
+.downloads-list li {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px 0;
+}
+
+.download-date,
+.download-again {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+@media (min-width: 480px) {
+  .downloads-list li {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .download-date,
+  .download-again {
+    margin-top: 0;
+    margin-left: 15px;
+  }
+}
+
+/* Адаптивные шрифты */
+.profile-container h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.profile-container p {
+  font-size: 16px;
+}
+
+@media (min-width: 768px) {
+  .profile-container h2 {
+    font-size: 32px;
+  }
+
+  .profile-container p {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-container h2 {
+    font-size: 40px;
+  }
 }

@@ -82,7 +82,7 @@ header {
   margin-left: 160px;
 }
 
-.nav-form button {
+a button {
   background: var(--fiol);
   color: white;
   border: none;
@@ -93,8 +93,35 @@ header {
   transition: background 0.3s;
 }
 
-.nav-form button:hover {
+a button:hover {
   background: #9785e2;
+}
+
+/* Стили для всплывающего сообщения */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #e97575;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification.show {
+  opacity: 1;
+}
+
+.notification.hide {
+  opacity: 0;
 }
 
 /* Бургер-меню (только для мобильных) */
@@ -132,6 +159,9 @@ header {
   }
 
   .login-btn {
+    margin-left: 0;
+  }
+  .profile-item {
     margin-left: 0;
   }
 
@@ -1313,4 +1343,21 @@ h2 {
 }
 .opis p {
   margin-bottom: 30px;
+}
+
+@media (min-width: 480px) {
+  .modal-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+.cancel-edit, .save-btn {
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .cancel-edit, .save-btn {
+    width: auto;
+  }
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
@@ -26,11 +26,16 @@
           <p>Вы не авторизованы. <a href="/login">Войти</a></p>
       <% } %>
       
+
       <div class="tabs">
+        <% if (user.role === 'teacher') { %>
           <button class="tab-btn active" data-tab="developments">Мои разработки</button>
-          <button class="tab-btn" data-tab="downloads">История скачиваний</button>
+        <% } %>
+        <button class="tab-btn <%= user.role === 'teacher' ? '' : 'active' %>" 
+                data-tab="downloads">История скачиваний</button>
       </div>
-      
+      <% if (user.role === 'teacher') { %>
+
       <!-- Вкладка с разработками -->
       <div id="developments" class="tab-content active">
         <% if (developments && developments.length > 0) { %>
@@ -56,12 +61,15 @@
                 <% }); %>
             </div>
         <% } else { %>
-            <p>У вас пока нет разработок. <a href="/addDevelopment">Добавить свою первую разработку</a></p>
+            <p>У вас пока нет разработок. <a href="/addDevelopment"> Добавить свою первую разработку</a></p>
         <% } %>
-    </div>
+      </div>
+        <% } %>  
+        
+ 
 
       <!-- Вкладка с историей скачиваний -->
-      <div id="downloads" class="tab-content">
+      <div id="downloads" class="tab-content <%= user.role === 'teacher' ? '' : 'active' %>">
         <% if (downloads && downloads.length > 0) { %>
             <ul class="downloads-list">
                 <% downloads.forEach(download => { %>
@@ -75,11 +83,11 @@
                         </a>
                     </li>
                 <% }); %>
-           
-        <% } else { %>
-            <p>Вы еще ничего не скачивали<a href="/catalog"> Скачать свою первую разработку</a></p>
+                <% } else { %>
+            <p>Вы еще ничего не скачивали <a href="/catalog"> Скачать свою первую разработку</a></p>
         <% } %> 
     </ul>
+   
     </div>
 
   
@@ -108,8 +116,8 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="cancel-edit">Отмена</button>
-                <button type="submit">Сохранить</button>
-            </div>
+                <button type="submit" class="save-btn">Сохранить</button>
+              </div>
         </form>
     </div>
 </div>
