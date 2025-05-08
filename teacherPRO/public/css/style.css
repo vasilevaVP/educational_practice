@@ -1095,6 +1095,9 @@ h2 {
   text-overflow: ellipsis;
   max-width: 370px;
 }
+.cardct a {
+  text-decoration: none;
+}
 
 .cardct .category,
 .tag {
@@ -1352,12 +1355,14 @@ h2 {
   }
 }
 
-.cancel-edit, .save-btn {
+.cancel-edit,
+.save-btn {
   width: 100%;
 }
 
 @media (min-width: 480px) {
-  .cancel-edit, .save-btn {
+  .cancel-edit,
+  .save-btn {
     width: auto;
   }
 }

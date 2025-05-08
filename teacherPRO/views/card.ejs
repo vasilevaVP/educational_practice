@@ -29,20 +29,15 @@
                     <% development.tags.forEach(tag => { %>
                         <%= tag.name %>,
                     <% }); %>
-                <% } else { %>
-                    Нет тегов
-                <% } %></p>
-        </div>
+                <% } else { %>Нет тегов<% } %></p></div>
             <div class="bs">
                 <a href="/download/<%= development.id %>">
-                    <button>Скачать</button>
-                  </a>
+                    <button>Скачать</button></a>
             </div>
         </div>
     </section>
     <div class="opis">
-        <p><b>Описание:</b><br><%= development.description %></p>
-    </div>
+        <p><b>Описание:</b><br><%= development.description %></p></div>
 </main>    
     <%- include('partials/footer') %>
 </body>

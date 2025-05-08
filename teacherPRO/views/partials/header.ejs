@@ -2,21 +2,18 @@
     <div class="logo">
         <a href="/index"><img src="./img/logo1.svg" alt="УчительPRO"></a>
     </div>
-    
-    <!-- Бургер для мобильных -->
+    <!-- Бургер для мобилки -->
     <div class="burger-menu" id="burgerMenu">
         <span></span>
         <span></span>
         <span></span>
     </div>
-    
     <!-- Основное меню -->
     <nav class="main-nav" id="mainNav">
         <ul class="nav-list">
             <li><a href="/index">Главная</a></li>
             <li><a href="/about_us">О нас</a></li>
             <li><a href="/catalog">Каталог</a></li>
-            
             <!-- Элементы авторизации -->
             <% if (user) { %>
                 <li class="profile-item">
@@ -33,14 +30,11 @@
             <% } else { %>
                 <li><a href="/login" class="login-btn">Войти</a></li>
             <% } %>
-        </ul>
-        <!-- Кнопка "Новый материал" внутри меню -->
-                
+        </ul>  
   <a href="/addDevelopment" data-role="<%= user ? user.role : '' %>" class="add-dev-btn"> 
-  <button> + Новый материал</button>
-</a>
-
+  <button> + Новый материал</button></a>
     </nav>
+  </header>
     <script>
 
     const burgerMenu = document.getElementById('burgerMenu');
@@ -95,4 +89,3 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
         </script>
-</header>
