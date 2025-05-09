@@ -82,7 +82,7 @@ header {
   margin-left: 160px;
 }
 
-a button {
+.add-dev-btn button {
   background: var(--fiol);
   color: white;
   border: none;
@@ -608,6 +608,7 @@ input::-webkit-input-placeholder {
   background-color: var(--blue);
   font: 300 16px Geologica;
   color: white;
+  cursor: pointer;
 }
 .form button:hover {
   background-color: #3c6ea7;
@@ -1137,6 +1138,7 @@ h2 {
   font: 300 16px Geologica;
   background-color: var(--blue);
   color: white;
+  transition: background 0.3s;
   cursor: pointer;
 }
 .bp button {
@@ -1148,7 +1150,13 @@ h2 {
   font: 400 16px Geologica;
   background-color: #f8f7f3;
   color: var(--blue);
+  transition: background 0.3s;
   cursor: pointer;
+}
+.bp button:hover {
+  background-color: #9785e2;
+  color: #fff;
+  border: none;
 }
 
 @media (max-width: 1200px) {

@@ -21,7 +21,7 @@
     <section id="formAddDevelopment">
         <h2>Поделитесь своей образовательной разработкой </h2>
         <form id="addDevelopmentForm" method="post" enctype="multipart/form-data" action="/add/development">
-            <div class="form-group">
+            <div class="form-group" id="developmentTitleGroup">
                 <label for="developmentTitle">Название разработки:</label>
                 <input type="text" id="developmentTitle" name="title" placeholder="Например, презентация на тему «История России» для 5 класса" required>
             </div>
@@ -88,40 +88,46 @@
     <%- include('partials/footer') %>
 
     <script>
-        document.getElementById('addDevelopmentForm').addEventListener('submit', async function(e) {
-          e.preventDefault();
-          const formData = new FormData(this);
-          const messageContainer = document.getElementById('messageContainer');
-          messageContainer.style.display = 'none';
-        
-          try {
-            const response = await fetch('/user/add/development', {
-              method: 'POST',
-              body: formData
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-              // Показываем сообщение об успехе
-              messageContainer.innerHTML = `
-                <div class="success-message">
-                  <p>Разработка успешно добавлена!</p>
-                  <a href="/profile" class="btn">Перейти в профиль</a>
-                </div>
-              `;
-              messageContainer.style.display = 'block';
-              this.reset();
-            } else {
-              messageContainer.innerHTML = `<div class="error-message">${data.error || 'Ошибка загрузки'}</div>`;
-              messageContainer.style.display = 'block';
-            }
-          } catch (error) {
-            console.error('Ошибка:', error);
-            messageContainer.innerHTML = `<div class="error-message">Ошибка соединения</div>`;
-            messageContainer.style.display = 'block';
-          }
-        });
+document.getElementById('addDevelopmentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const messageContainer = document.getElementById('messageContainer');
+  
+  // Показываем сообщение о том, что отправка в процессе
+  messageContainer.style.display = 'block';
+  messageContainer.innerHTML = '<div class="loading">Загрузка...</div>';
+
+  try {
+    const response = await fetch('/user/add/development', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP статус: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Сообщение об успехе
+      messageContainer.innerHTML = `
+        <div class="success-message">
+          <p>Разработка успешно добавлена!</p>
+          <a href="/profile" class="btn">Перейти в профиль</a>
+        </div>`;
+      this.reset();
+    } else {
+      // Обработка ошибок, присланных с сервера
+      messageContainer.innerHTML = `<div class="error-message">${data.error || 'Ошибка загрузки'}</div>`;
+    }
+  } catch (error) {
+    // Обработка ошибок сети или исключений
+    console.error('Ошибка:', error);
+    messageContainer.innerHTML = `<div class="error-message">Ошибка соединения</div>`;
+  }
+});
+
         </script>
 </body>
 </html>

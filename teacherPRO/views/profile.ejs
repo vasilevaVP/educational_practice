@@ -122,42 +122,41 @@
 <%- include('partials/footer') %>
 
 <script>
-  // Переключение между вкладками
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
+ // Переключение между вкладками
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        this.classList.add('active');
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+    });
+});
 
-          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          
-          this.classList.add('active');
-          const tabId = this.getAttribute('data-tab');
-          document.getElementById(tabId).classList.add('active');
-      });
-  });
-  
-  // Удаление разработки
-  document.querySelectorAll('.delete-dev-btn').forEach(btn => {
-      btn.addEventListener('click', async function() {
-          const devId = this.getAttribute('data-id');
-          if (confirm('Вы уверены, что хотите удалить эту разработку?')) {
-              try {
-                  const response = await fetch(`/user/developments/delete/${devId}`, {
-                      method: 'POST'
-                  });
-                  const data = await response.json();
-                  
-                  if (data.success) {
-                      document.querySelector(`.development-item[data-id="${devId}"]`).remove();
-                  } else {
-                      alert(data.error || 'Ошибка удаления');
-                  }
-              } catch (error) {
-                  console.error('Ошибка:', error);
-                  alert('Ошибка соединения');
-              }
-          }
-      });
-  });
+// Удаление разработки
+document.querySelectorAll('.delete-dev-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const devId = this.getAttribute('data-id');
+        if (confirm('Вы уверены, что хотите удалить эту разработку?')) {
+            try {
+                const response = await fetch(`/user/developments/delete/${devId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.querySelector(`.development-item[data-id="${devId}"]`).remove();
+                } else {
+                    alert(data.error || 'Ошибка удаления');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка соединения');
+            }
+        }
+    });
+});
   
   // Открытие модального окна для редактирования
   document.querySelectorAll('.edit-dev-btn').forEach(btn => {

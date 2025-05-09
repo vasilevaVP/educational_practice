@@ -232,3 +232,86 @@ input[type="file"] {
   background: var(--blue);
   background: linear-gradient(90deg, #5b8dc8 0%, rgba(15, 31, 152, 1) 100%);
 }
+
+@media (max-width: 768px) {
+  main {
+    width: 95%;
+    padding: 0 15px;
+    margin-top: 20px;
+  }
+
+  #formAddDevelopment form {
+    width: 100%;
+  }
+
+  /* Заголовок */
+  #formAddDevelopment h2 {
+    font-size: 1.3rem;
+    width: 93%;
+    margin-bottom: 20px;
+  }
+
+  /* Текстовые поля */
+  #formAddDevelopment [type="text"],
+  #developmentDescription {
+    width: 92%;
+    max-width: none;
+    min-width: auto;
+    margin-bottom: 20px;
+  }
+
+  /* Файловые инпуты */
+  input[type="file"] {
+    padding: 40px 20px !important;
+    width: 93%;
+  }
+
+  /* Контейнер с файлом и превью */
+  .filePreviewContainer {
+    flex-direction: column;
+  }
+
+  .fl {
+    width: 100%;
+  }
+
+  /* Чекбоксы тегов */
+  #tagCheckboxes {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Кнопка "Загрузить" */
+  #formAddDevelopment button {
+    width: 93%;
+    margin-top: 30px;
+  }
+
+  /* Панель инструментов (bold, italic и т.д.) */
+  .toolbar {
+    flex-wrap: wrap;
+    width: 92%;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .toolbar img {
+    width: 20px;
+  }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+  #tagCheckboxes {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toolbar {
+    justify-content: center;
+  }
+
+  input[type="file"] {
+    padding: 30px 10px !important;
+  }
+}

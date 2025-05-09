@@ -562,31 +562,36 @@ app.post("/subscribe", async (req, res) => {
 // Роут для страницы каталога
 app.get("/catalog", async (req, res) => {
   try {
-    const developments = await Development.findAll({
-      include: [
-        {
-          model: Category,
-          as: "category",
-        },
-        {
-          model: Tag,
-          as: "tags",
-          through: { attributes: [] }, // Убираем лишние данные из промежуточной таблицы
-        },
-      ],
-    });
+    const [categories, tags, developments] = await Promise.all([
+      Category.findAll(),
+      Tag.findAll(),
+      Development.findAll({
+        include: [
+          {
+            model: Category,
+            as: "category",
+          },
+          {
+            model: Tag,
+            as: "tags",
+            through: { attributes: [] }, // Убираем лишние данные из промежуточной таблицы
+          },
+        ],
+      }),
+    ]);
 
     res.render("catalog", {
       user: req.session.user,
       developments: developments.map((dev) => dev.get({ plain: true })),
-      categories: await Category.findAll(),
-      tags: await Tag.findAll(),
+      categories,
+      tags,
     });
   } catch (error) {
-    console.error("Ошибка:", error);
+    console.error("Ошибка при загрузке каталога:", error);
     res.status(500).send("Ошибка сервера");
   }
 });
+
 // Роут для страницы подробнее для разработки
 app.get("/card", isAuthenticated, async (req, res) => {
   const developmentId = req.query.id;
@@ -700,14 +705,11 @@ app.get("/addDevelopment", isAuthenticated, async (req, res) => {
   });
 });
 
-// Роут для получения разработок пользователя
 app.get("/user/developments/:userId", isAuthenticated, async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const developments = await Development.findAll({
-      where: { userId },
-    });
+    const developments = await Development.findAll({ where: { userId } });
     res.json(developments);
   } catch (error) {
     console.error("Ошибка при получении разработок пользователя:", error);
