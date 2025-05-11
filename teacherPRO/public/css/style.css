@@ -1355,6 +1355,86 @@ h2 {
 .opis p {
   margin-bottom: 30px;
 }
+/* Адаптив для планшетов (до 1024px) */
+@media (max-width: 1024px) {
+  #cardDevelopmentInfo,
+  .opis {
+    width: 90%;
+  }
+
+  .prew img {
+    width: 400px;
+  }
+}
+
+/* Адаптив для мобильных устройств (до 768px) */
+@media (max-width: 768px) {
+  #cardDevelopmentInfo {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+  }
+
+  .prew img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+  }
+
+  .info {
+    margin-left: 0;
+    margin-top: 30px;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .info h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .categteg {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .bs button {
+    width: 100%;
+    max-width: 230px;
+  }
+
+  .opis {
+    width: 90%;
+    margin-top: 40px;
+    margin-bottom: 150px;
+  }
+
+  .banner2 {
+    margin-bottom: 50px;
+  }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+  .info h1 {
+    font-size: 1.3rem;
+  }
+
+  .categteg {
+    font-size: 0.9rem;
+  }
+
+  .bs button {
+    padding: 15px;
+    font-size: 1rem;
+  }
+
+  .opis {
+    font-size: 0.9rem;
+    margin-bottom: 100px;
+  }
+}
 
 @media (min-width: 480px) {
   .modal-actions {
