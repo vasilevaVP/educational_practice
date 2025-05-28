@@ -92,6 +92,19 @@ document.getElementById('addDevelopmentForm').addEventListener('submit', async f
   e.preventDefault();
   const formData = new FormData(this);
   const messageContainer = document.getElementById('messageContainer');
+
+   // Получаем текст из редактора
+  const editorContent = document.getElementById('developmentDescription').innerHTML;
+  
+  // Если текст не содержит HTML-тегов, добавляем базовое форматирование
+  if (!/<[a-z][\s\S]*>/i.test(editorContent)) {
+    const formattedContent = editorContent
+      .split('\n')
+      .filter(line => line.trim() !== '')
+      .map(line => `<p>${line}</p>`)
+      .join('');
+    formData.set('description', formattedContent);
+  }
   
   // Показываем сообщение о том, что отправка в процессе
   messageContainer.style.display = 'block';

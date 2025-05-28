@@ -10,11 +10,26 @@ const path = require("path");
 const app = express();
 const port = 3000;
 
-// Настройка базы данных SQLite
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "db.sqlite",
-});
+const config = require("./config.json");
+const sequelize = new Sequelize(
+  config.development.database,
+  config.development.username,
+  config.development.password,
+  {
+    host: config.development.host,
+    port: config.development.port,
+    dialect: config.development.dialect,
+    logging: console.log, // Можно убрать в продакшене
+    dialectOptions: {
+      ssl: false, // Если нужно SSL соединение
+    },
+  }
+);
+// Проверка подключения
+sequelize
+  .authenticate()
+  .then(() => console.log("Установлено соединение с PostgreSQL"))
+  .catch((err) => console.error("Ошибка подключения к PostgreSQL:", err));
 
 // Модель роли
 const Role = sequelize.define(
@@ -31,7 +46,7 @@ const Role = sequelize.define(
       unique: true,
     },
   },
-  { timestamps: false }
+  { timestamps: false, tableName: "roles" }
 );
 
 // Модель пользователей
@@ -85,7 +100,7 @@ const User = sequelize.define(
       allowNull: true, // Только для учителей
     },
   },
-  { timestamps: false }
+  { timestamps: false, tableName: "users" }
 );
 
 // Модель Development
@@ -104,6 +119,18 @@ const Development = sequelize.define(
     },
     description: {
       type: DataTypes.TEXT,
+      set(value) {
+        // Преобразуем null/undefined в NULL для базы данных
+        if (!value || value.trim() === "") {
+          this.setDataValue("description", null);
+        } else {
+          // Если текст без тегов, добавляем базовое форматирование
+          const processedValue = value.startsWith("<")
+            ? value
+            : `<p>${value}</p>`;
+          this.setDataValue("description", processedValue);
+        }
+      },
     },
     file_path: {
       type: DataTypes.STRING,
@@ -129,6 +156,7 @@ const Development = sequelize.define(
   },
   {
     timestamps: false,
+    tableName: "developments",
   }
 );
 
@@ -400,7 +428,7 @@ DownloadHistory.belongsTo(Development, {
 
 // Синхронизация базы данных и создание админа при первом запуске
 sequelize
-  .sync({ force: false })
+  .sync({ alter: true })
   .then(async () => {
     const roles = ["admin", "teacher", "student"];
     for (const roleName of roles) {
@@ -946,14 +974,24 @@ app.post(
         return res.status(400).json({ error: "Не загружены файлы." });
       }
 
+      // Фикс: проверяем и обрабатываем описание
+      let processedDescription = description;
+      if (description && !description.startsWith("<")) {
+        // Если описание не содержит HTML-тегов, преобразуем переносы строк в <p>
+        processedDescription = description
+          .split("\n")
+          .map((p) => (p.trim() ? `<p>${p}</p>` : ""))
+          .join("");
+      }
+
       // Преобразуем теги в массив чисел
       if (!Array.isArray(tags)) tags = [tags];
       tags = tags.map((id) => parseInt(id)).filter((id) => !isNaN(id));
 
-      // Создаем разработку
+      // Создаем разработку с обработанным описанием
       const development = await Development.create({
         title,
-        description,
+        description: processedDescription, // Используем обработанное описание
         file_path: `/uploads/${req.files["file_path"][0].filename}`,
         preview: `/uploads/${req.files["preview"][0].filename}`,
         categoryId: parseInt(category_id),
@@ -994,7 +1032,16 @@ app.post("/user/developments/delete/:id", isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: "Разработка не найдена" });
     }
 
+    // Удаляем все записи из истории скачиваний, связанные с этой разработкой
+    await DownloadHistory.destroy({
+      where: {
+        developmentId: development.id,
+      },
+    });
+
+    // Удаляем саму разработку
     await development.destroy();
+
     res.json({ success: true });
   } catch (error) {
     console.error("Ошибка:", error);
