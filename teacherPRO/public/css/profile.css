@@ -179,20 +179,24 @@ main {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 20px;
   z-index: 1000;
 }
 
 .modal-content {
   background: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   width: 90%;
-  max-width: 600px;
+  max-width: 800px;
+  max-height: 90vh; /* Ограничиваем высоту */
+  overflow-y: auto; /* Добавляем скролл для контента */
   position: relative;
+  margin: 20px 0; /* Добавляем отступ сверху и снизу */
 }
 
 .close-modal {
@@ -325,6 +329,44 @@ main {
 }
 .modal-actions button:hover {
   background-color: #375981;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+.editor-toolbar button {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.editor-toolbar button:hover {
+  background: #ddd;
+}
+.editor-toolbar img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+.editor-content {
+  min-height: 150px;
+  max-height: 300px; /* Ограничиваем высоту редактора */
+  overflow-y: auto; /* Добавляем скролл для длинного текста */
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 15px;
+  font: 300 15px Geologica;
+  text-align: left;
+}
+
+/* Запрещаем скролл body при открытом модальном окне */
+body.modal-open {
+  overflow: hidden;
 }
 
 /* Медиазапросы для планшетов */

@@ -88,7 +88,7 @@
    
     </div>
   <!-- Модальное окно для редактирования -->
-  <div id="editModal" class="modal-overlay" style="display: none;">
+ <div id="editModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <button class="close-modal">&times;</button>
         <h3>Редактировать разработку</h3>
@@ -100,7 +100,38 @@
             </div>
             <div class="form-group">
                 <label for="editDescription">Описание:</label>
-                <textarea id="editDescription" name="description"></textarea>
+                
+                <!-- Добавляем панель инструментов редактора -->
+                <div class="editor-toolbar">
+                    <button type="button" onclick="formatTextModal('bold', 'editDescription')" title="Жирный">
+                        <img src="/img/bold.svg" alt="B">
+                    </button>
+                    <button type="button" onclick="formatTextModal('italic', 'editDescription')" title="Курсив">
+                        <img src="/img/italic.svg" alt="I">
+                    </button>
+                    <button type="button" onclick="formatTextModal('underline', 'editDescription')" title="Подчеркивание">
+                        <img src="/img/underline.svg" alt="U">
+                    </button>
+                    <button type="button" onclick="insertLinkModal('editDescription')" title="Ссылка">
+                        <img src="/img/link.svg" alt="Link">
+                    </button>
+                    <button type="button" onclick="insertListModal('ordered', 'editDescription')" title="Нумерованный список">
+                        <img src="/img/list-numbers.svg" alt="OL">
+                    </button>
+                    <button type="button" onclick="insertListModal('unordered', 'editDescription')" title="Маркированный список">
+                        <img src="/img/list.svg" alt="UL">
+                    </button>
+                    <button type="button" onclick="execCommandModal('undo', 'editDescription')" title="Отменить">
+                        <img src="/img/undo.svg" alt="Undo">
+                    </button>
+                    <button type="button" onclick="execCommandModal('redo', 'editDescription')" title="Повторить">
+                        <img src="/img/redo.svg" alt="Redo">
+                    </button>
+                </div>
+                
+                <!-- Заменяем textarea на contenteditable div -->
+                <div id="editDescription" class="editor-content" contenteditable="true"></div>
+                <textarea id="editDescriptionHidden" name="description" style="display:none;"></textarea>
             </div>
             <div class="form-group">
                 <label>Теги:</label>
@@ -158,9 +189,52 @@ document.querySelectorAll('.delete-dev-btn').forEach(btn => {
     });
 });
   
-  // Открытие модального окна для редактирования
+  // Функции для работы с редактором в модальном окне
+  function formatTextModal(command, elementId) {
+    const element = document.getElementById(elementId);
+    document.execCommand(command, false, null);
+    element.focus();
+    updateModalHiddenField(elementId);
+  }
+
+  function execCommandModal(command, elementId) {
+    const element = document.getElementById(elementId);
+    document.execCommand(command, false, null);
+    element.focus();
+    updateModalHiddenField(elementId);
+  }
+
+  function insertListModal(type, elementId) {
+    const element = document.getElementById(elementId);
+    document.execCommand(type === 'ordered' ? 'insertOrderedList' : 'insertUnorderedList', false, null);
+    element.focus();
+    updateModalHiddenField(elementId);
+  }
+
+  function insertLinkModal(elementId) {
+    const element = document.getElementById(elementId);
+    const url = prompt('Введите URL ссылки:', 'http://');
+    if (url) {
+      document.execCommand('createLink', false, url);
+      element.focus();
+      updateModalHiddenField(elementId);
+    }
+  }
+
+  function updateModalHiddenField(elementId) {
+    const editor = document.getElementById(elementId);
+    const hiddenField = document.getElementById(elementId + 'Hidden');
+    hiddenField.value = editor.innerHTML;
+  }
+
+  // Обновляем скрытое поле перед отправкой формы
+  document.getElementById('editDevelopmentForm').addEventListener('submit', function() {
+    updateModalHiddenField('editDescription');
+  });
+
+  // При открытии модального окна копируем HTML в contenteditable div
   document.querySelectorAll('.edit-dev-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
+    btn.addEventListener('click', async function() {
             const devId = this.getAttribute('data-id');
             
             try {
@@ -189,6 +263,11 @@ document.querySelectorAll('.delete-dev-btn').forEach(btn => {
                         tagsContainer.appendChild(div);
                     });
                     
+                                // После загрузки данных:
+      const editor = document.getElementById('editDescription');
+      const hiddenField = document.getElementById('editDescriptionHidden');
+      editor.innerHTML = data.development.description || '';
+      hiddenField.value = data.development.description || '';
                     // Показываем модальное окно
                     document.getElementById('editModal').style.display = 'flex';
                 } else {
@@ -198,8 +277,11 @@ document.querySelectorAll('.delete-dev-btn').forEach(btn => {
                 console.error('Ошибка:', error);
                 alert('Ошибка соединения');
             }
+
         });
     });
+
+       
   
   // Закрытие модального окна
   document.querySelector('.close-modal').addEventListener('click', function() {

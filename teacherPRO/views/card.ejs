@@ -36,8 +36,11 @@
             </div>
         </div>
     </section>
-    <div class="opis">
-        <p><b>Описание:</b><br><%= development.description %></p></div>
+ <div class="opis">
+  <p><b>Описание:</b></p>
+  <div class="description-content"><%- development.description %></div>
+</div>
+
 </main>    
     <%- include('partials/footer') %>
 </body>

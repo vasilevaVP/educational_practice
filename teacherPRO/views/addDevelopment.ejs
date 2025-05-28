@@ -26,21 +26,21 @@
                 <input type="text" id="developmentTitle" name="title" placeholder="Например, презентация на тему «История России» для 5 класса" required>
             </div>
          
-            <div class="form-group">
-                <label for="developmentDescription">Описание:</label>
-        
-                <div class="toolbar">
-                    <label onclick="formatText('bold')"><b><img src="./img/bold.svg" alt=""></b></label>
-                    <label onclick="formatText('italic')"><i><img src="./img/italic.svg" alt=""></i></label>
-                    <label onclick="formatText('underline')"><u><img src="./img/underline.svg" alt=""></u></label>
-                    <label onclick="insertLink()"><img src="./img/link.svg" alt=""></label>
-                    <label onclick="insertOrderedList()"><img src="./img/list-numbers.svg" alt=""></label>
-                    <label onclick="insertUnorderedList()"><img src="./img/list.svg" alt=""></label>
-                    <label onclick="undo()"><img src="./img/undo.svg" alt=""></label>
-                    <label onclick="redo()"><img src="./img/redo.svg" alt=""></label>
-                </div>
-                <textarea id="developmentDescription" name="description" rows="4"></textarea>
-            </div>
+<div class="form-group">
+  <label for="developmentDescription">Описание:</label>
+  <div class="toolbar">
+    <button type="button" onclick="formatText('bold')"><img src="/img/bold.svg" alt="Жирный"></button>
+    <button type="button" onclick="formatText('italic')"><img src="/img/italic.svg" alt="Курсив"></button>
+    <button type="button" onclick="formatText('underline')"><img src="/img/underline.svg" alt="Подчеркивание"></button>
+    <button type="button" onclick="insertLink()"><img src="/img/link.svg" alt="Ссылка"></button>
+    <button type="button" onclick="insertList('ordered')"><img src="/img/list-numbers.svg" alt="Нумерованный список"></button>
+    <button type="button" onclick="insertList('unordered')"><img src="/img/list.svg" alt="Маркированный список"></button>
+    <button type="button" onclick="execCommand('undo')"><img src="/img/undo.svg" alt="Отменить"></button>
+    <button type="button" onclick="execCommand('redo')"><img src="/img/redo.svg" alt="Повторить"></button>
+  </div>
+  <div id="developmentDescription" contenteditable="true" style="border: 1px solid #ccc; padding: 10px; min-height: 150px;"></div>
+  <textarea id="descriptionHidden" name="description" style="display:none;"></textarea>
+</div>
             <div class="filePreviewContainer">
             <div class="form-group">
                 <label for="developmentFile">Файл разработки:</label>
@@ -127,6 +127,40 @@ document.getElementById('addDevelopmentForm').addEventListener('submit', async f
     messageContainer.innerHTML = `<div class="error-message">Ошибка соединения</div>`;
   }
 });
+  // Функции для форматирования текста
+  function formatText(command) {
+    document.execCommand(command, false, null);
+    updateHiddenField();
+  }
+
+  function execCommand(command) {
+    document.execCommand(command, false, null);
+    updateHiddenField();
+  }
+
+  function insertList(type) {
+    document.execCommand(type === 'ordered' ? 'insertOrderedList' : 'insertUnorderedList', false, null);
+    updateHiddenField();
+  }
+
+  function insertLink() {
+    const url = prompt('Введите URL ссылки:', 'http://');
+    if (url) {
+      document.execCommand('createLink', false, url);
+      updateHiddenField();
+    }
+  }
+
+  // Обновляем скрытое поле перед отправкой формы
+  function updateHiddenField() {
+    document.getElementById('descriptionHidden').value = document.getElementById('developmentDescription').innerHTML;
+  }
+
+  // Обновляем перед отправкой формы
+  document.getElementById('addDevelopmentForm').addEventListener('submit', function() {
+    updateHiddenField();
+  });
+
         </script>
 </body>
 </html>

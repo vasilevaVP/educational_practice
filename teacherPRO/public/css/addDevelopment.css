@@ -64,7 +64,7 @@ input[type="file"] {
   margin-bottom: 30px;
 }
 
-.toolbar label {
+.toolbar button {
   padding: 5px 10px;
   border: none;
   border-radius: 10px;
@@ -136,7 +136,7 @@ input[type="file"] {
   margin-bottom: 60px;
 }
 
-#formAddDevelopment button {
+#formAddDevelopment [type="submit"] {
   width: 200px;
   height: 60px;
   border: none;
@@ -283,16 +283,16 @@ input[type="file"] {
   }
 
   /* Кнопка "Загрузить" */
-  #formAddDevelopment button {
+  #formAddDevelopment [type="submit"] {
     width: 93%;
-    margin-top: 30px;
+    height: 95%;
+    padding: 10px;
+    margin-top: 20px;
   }
 
   /* Панель инструментов (bold, italic и т.д.) */
   .toolbar {
-    flex-wrap: wrap;
     width: 92%;
-    gap: 8px;
     padding: 10px;
   }
 
