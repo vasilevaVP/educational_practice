@@ -1,0 +1,23 @@
+databases:
+  - name: teatherdb
+    databaseName: teatherdb
+    user: teatherdb_user
+    plan: free # бесплатный тариф
+
+services:
+  - type: web
+    name: УчительPRO
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teatherdb
+          property: connectionString
