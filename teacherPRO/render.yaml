@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: УчительPRO
+    name: TeacherPRO
     runtime: node
     buildCommand: npm install
     startCommand: node server.js

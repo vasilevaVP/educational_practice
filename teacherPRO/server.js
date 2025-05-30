@@ -8,21 +8,21 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const config = require("./config.json");
 const sequelize = new Sequelize(
-  config.development.database,
-  config.development.username,
-  config.development.password,
+  process.env.DATABASE_URL || config.development.database,
   {
-    host: config.development.host,
-    port: config.development.port,
-    dialect: config.development.dialect,
-    logging: console.log, // Можно убрать в продакшене
+    dialect: "postgres",
+    protocol: "postgres",
     dialectOptions: {
-      ssl: false, // Если нужно SSL соединение
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
+    logging: console.log,
   }
 );
 // Проверка подключения
