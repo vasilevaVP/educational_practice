@@ -40,9 +40,6 @@ if (process.env.NODE_ENV === "production") {
   }, 3600000); // Каждый час (в миллисекундах)
 }
 
-const fs = require("fs");
-const path = require("path");
-
 // Функция для удаления старых файлов
 const clearTempFiles = () => {
   const uploadsDir = path.join(__dirname, "public", "uploads");
