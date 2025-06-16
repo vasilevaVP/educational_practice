@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const PostgreSQLStore = require("connect-pg-simple")(session);
 const { Sequelize, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
@@ -31,51 +32,63 @@ sequelize
   .then(() => console.log("Установлено соединение с PostgreSQL"))
   .catch((err) => console.error("Ошибка подключения к PostgreSQL:", err));
 
-if (process.env.NODE_ENV === "production") {
-  setInterval(() => {
-    sequelize
-      .query("VACUUM;")
-      .then(() => console.log("PostgreSQL: выполнена очистка (VACUUM)"))
-      .catch((err) => console.error("Ошибка VACUUM:", err));
-  }, 3600000); // Каждый час (в миллисекундах)
-}
-
-// Функция для удаления старых файлов
 const clearTempFiles = () => {
   const uploadsDir = path.join(__dirname, "public", "uploads");
 
-  // Проверяем, существует ли папка uploads
+  // Создаем папку, если ее нет
   if (!fs.existsSync(uploadsDir)) {
-    console.log("Папка uploads не существует, пропускаем очистку");
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log("Папка uploads создана");
     return;
   }
 
-  // Читаем все файлы в папке
-  fs.readdir(uploadsDir, (err, files) => {
-    if (err) {
-      console.error("Ошибка чтения папки uploads:", err);
+  if (process.env.NODE_ENV === "production") {
+    setInterval(() => {
+      sequelize
+        .query("VACUUM;")
+        .then(() => console.log("PostgreSQL: выполнена очистка (VACUUM)"))
+        .catch((err) => console.error("Ошибка VACUUM:", err));
+    }, 3600000); // Каждый час (в миллисекундах)
+  }
+
+  // Функция для удаления старых файлов
+  const clearTempFiles = () => {
+    const uploadsDir = path.join(__dirname, "public", "uploads");
+
+    // Проверяем, существует ли папка uploads
+    if (!fs.existsSync(uploadsDir)) {
+      console.log("Папка uploads не существует, пропускаем очистку");
       return;
     }
 
-    // Перебираем файлы
-    files.forEach((file) => {
-      const filePath = path.join(uploadsDir, file);
-
-      try {
-        // Получаем информацию о файле (дата изменения)
-        const stats = fs.statSync(filePath);
-        const fileAgeInHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
-
-        // Удаляем файлы старше 24 часов
-        if (fileAgeInHours > 24) {
-          fs.unlinkSync(filePath);
-          console.log("Удалён старый файл:", filePath);
-        }
-      } catch (error) {
-        console.error("Ошибка при удалении файла:", filePath, error);
+    // Читаем все файлы в папке
+    fs.readdir(uploadsDir, (err, files) => {
+      if (err) {
+        console.error("Ошибка чтения папки uploads:", err);
+        return;
       }
+
+      // Перебираем файлы
+      files.forEach((file) => {
+        const filePath = path.join(uploadsDir, file);
+
+        try {
+          // Получаем информацию о файле (дата изменения)
+          const stats = fs.statSync(filePath);
+          const fileAgeInHours =
+            (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+
+          // Удаляем файлы старше 24 часов
+          if (fileAgeInHours > 24) {
+            fs.unlinkSync(filePath);
+            console.log("Удалён старый файл:", filePath);
+          }
+        } catch (error) {
+          console.error("Ошибка при удалении файла:", filePath, error);
+        }
+      });
     });
-  });
+  };
 };
 
 // Вызываем очистку при запуске сервера
@@ -521,9 +534,17 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(
   session({
-    secret: "secret-key",
-    resave: true,
+    store: new PostgreSQLStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET || "secret-key",
+    resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
+    },
   })
 );
 
@@ -892,13 +913,7 @@ app.post(
 );
 
 // Настройка multer для обработки загрузки файлов
-const storage = multer.memoryStorage(); // Теперь файлы хранятся в ОЗУ, а не на диске
-
-const upload = multer({
-  storage: storage, // Используем memoryStorage вместо diskStorage
-  fileFilter: fileFilter, // Оставляем ваш старый fileFilter
-  limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение 10 МБ
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
@@ -938,6 +953,12 @@ const fileFilter = (req, file, cb) => {
 
   cb(null, true);
 };
+
+const upload = multer({
+  storage: storage, // Используем memoryStorage вместо diskStorage
+  fileFilter: fileFilter, // Оставляем ваш старый fileFilter
+  limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение 10 МБ
+});
 
 // AJAX endpoints для добавления
 app.post(
