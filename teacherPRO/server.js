@@ -10,11 +10,6 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
-process.env.NODE_ENV === "production" &&
-  setInterval(() => {
-    sequelize.query("VACUUM;").catch(console.error);
-  }, 3600000); // Каждый час очищаем "мусор"
-
 const config = require("./config.json");
 const sequelize = new Sequelize(
   process.env.DATABASE_URL || config.development.database,
@@ -35,27 +30,6 @@ sequelize
   .authenticate()
   .then(() => console.log("Установлено соединение с PostgreSQL"))
   .catch((err) => console.error("Ошибка подключения к PostgreSQL:", err));
-
-const clearTempFiles = () => {
-  const uploadsDir = path.join(__dirname, "public", "uploads");
-
-  if (fs.existsSync(uploadsDir)) {
-    fs.readdir(uploadsDir, (err, files) => {
-      if (err) return;
-
-      files.forEach((file) => {
-        const filePath = path.join(uploadsDir, file);
-        // Удаляем файлы старше 24 часов
-        if (Date.now() - fs.statSync(filePath).mtimeMs > 86400000) {
-          fs.unlinkSync(filePath);
-        }
-      });
-    });
-  }
-};
-
-// Вызывайте при старте сервера
-clearTempFiles();
 
 // Модель роли
 const Role = sequelize.define(
@@ -868,7 +842,7 @@ app.post(
 );
 
 // Настройка multer для обработки загрузки файлов
-const storage = multer.memoryStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "public", "uploads"));
   },
@@ -920,7 +894,7 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-const upload = multer({ storage })({
+const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 100 * 1024 * 1024 },
