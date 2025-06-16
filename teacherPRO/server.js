@@ -26,6 +26,7 @@ const sequelize = new Sequelize(
     logging: console.log,
   }
 );
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // Проверка подключения
 sequelize
   .authenticate()
