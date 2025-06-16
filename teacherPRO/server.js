@@ -534,11 +534,14 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(
   session({
-    store: new PostgreSQLStore({
+    store: new pgSession({
       conString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       createTableIfMissing: true,
     }),
-    secret: process.env.SESSION_SECRET || "secret-key",
+    secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
     cookie: {
