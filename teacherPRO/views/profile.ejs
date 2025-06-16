@@ -101,7 +101,7 @@
             <div class="form-group">
                 <label for="editDescription">Описание:</label>
                 
-                <!-- Добавляем панель инструментов редактора -->
+                <!--Панель инструментов редактора -->
                 <div class="editor-toolbar">
                     <button type="button" onclick="formatTextModal('bold', 'editDescription')" title="Жирный">
                         <img src="/img/bold.svg" alt="B">
@@ -128,8 +128,6 @@
                         <img src="/img/redo.svg" alt="Redo">
                     </button>
                 </div>
-                
-                <!-- Заменяем textarea на contenteditable div -->
                 <div id="editDescription" class="editor-content" contenteditable="true"></div>
                 <textarea id="editDescriptionHidden" name="description" style="display:none;"></textarea>
             </div>

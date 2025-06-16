@@ -10,6 +10,11 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
+process.env.NODE_ENV === "production" &&
+  setInterval(() => {
+    sequelize.query("VACUUM;").catch(console.error);
+  }, 3600000); // Каждый час очищаем "мусор"
+
 const config = require("./config.json");
 const sequelize = new Sequelize(
   process.env.DATABASE_URL || config.development.database,
@@ -30,6 +35,27 @@ sequelize
   .authenticate()
   .then(() => console.log("Установлено соединение с PostgreSQL"))
   .catch((err) => console.error("Ошибка подключения к PostgreSQL:", err));
+
+const clearTempFiles = () => {
+  const uploadsDir = path.join(__dirname, "public", "uploads");
+
+  if (fs.existsSync(uploadsDir)) {
+    fs.readdir(uploadsDir, (err, files) => {
+      if (err) return;
+
+      files.forEach((file) => {
+        const filePath = path.join(uploadsDir, file);
+        // Удаляем файлы старше 24 часов
+        if (Date.now() - fs.statSync(filePath).mtimeMs > 86400000) {
+          fs.unlinkSync(filePath);
+        }
+      });
+    });
+  }
+};
+
+// Вызывайте при старте сервера
+clearTempFiles();
 
 // Модель роли
 const Role = sequelize.define(
@@ -722,7 +748,7 @@ app.get("/addDevelopment", isAuthenticated, async (req, res) => {
     return res.redirect("/profile");
   }
 
-  // Продолжаем обработку для учителей
+  // Обработка для учителей
   const categories = await Category.findAll();
   const tags = await Tag.findAll();
   res.render("addDevelopment", {
@@ -842,7 +868,7 @@ app.post(
 );
 
 // Настройка multer для обработки загрузки файлов
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "public", "uploads"));
   },
@@ -894,7 +920,7 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-const upload = multer({
+const upload = multer({ storage })({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 100 * 1024 * 1024 },
@@ -1386,9 +1412,9 @@ app.post("/forgot-password", async (req, res) => {
       expiresAt,
     });
 
-    // Отправляем email с ссылкой (в реальном приложении)
+    // Отправляем email с ссылкой
     const resetLink = `http://${req.headers.host}/reset-password?token=${token}`;
-    console.log(`Ссылка для сброса пароля: ${resetLink}`); // В реальном приложении отправляем email
+    console.log(`Ссылка для сброса пароля: ${resetLink}`);
 
     res.render("forgot-password", {
       user: req.session.user,
