@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const PostgreSQLStore = require("connect-pg-simple")(session);
+const pgSession = require("connect-pg-simple")(session);
 const { Sequelize, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
